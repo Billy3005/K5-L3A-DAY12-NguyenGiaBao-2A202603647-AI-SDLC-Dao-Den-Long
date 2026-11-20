@@ -40,7 +40,7 @@ describe('bench scene §1', () => {
     // Codex P4 review: shades near Mây must not switch to chase/drain — the ticket fixes 200 shades in wander
     expect(w.shades.filter((s) => s.state !== 'wander').map((s) => `${s.id}:${s.state}`)).toEqual([]);
     expect(w.shades.filter((s, i) => s.pos[0] !== before[i][0] || s.pos[2] !== before[i][2]).length).toBeGreaterThan(150);
-  });
+  }, 60000); // 18,000 ticks × 200 shades: ~3–5 s locally, slower on CI runners
 });
 
 describe('frame stats §1 (ticket formulas)', () => {
