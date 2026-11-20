@@ -42,7 +42,7 @@ export function main(argv: string[]): number {
     const a = parseArgs(argv);
     const seed = int(a, 'seed', true, Number.MIN_SAFE_INTEGER)!;
     const night = int(a, 'night', true, 1)!;
-    if (night !== 1) throw new CliError(`--night ${night} not supported (only 1)`, 1);
+    if (night < 1 || night > 3) throw new CliError(`--night must be 1, 2 or 3 (got ${night})`, 1);
     const ticks = int(a, 'ticks', true, 0)!;
     const snapshotEvery = int(a, 'snapshot-every', false, 1);
     if (!a.out) throw new CliError('--out is required', 1);
@@ -50,7 +50,7 @@ export function main(argv: string[]): number {
     const inputs = a.inputs ? loadJson(a.inputs, InputsSchema, 'inputs') : undefined;
     let lines: string[];
     try {
-      lines = runHeadless({ seed, ticks, snapshotEvery, scenario, inputs });
+      lines = runHeadless({ seed, ticks, night: night as 1 | 2 | 3, snapshotEvery, scenario, inputs });
     } catch (e) {
       if (e instanceof ScenarioError) throw new CliError(`scenario: ${e.message}`, 2);
       throw e;
