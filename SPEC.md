@@ -6,6 +6,9 @@ Spec sống: cập nhật **trước** code mỗi khi ticket đổi. Số liệu
 |---|---|---|
 | 1 | PRD-0 | v1.0 |
 | 2 | [Ticket-02 "Ba hòn đảo"](docs/tickets/ticket-02.md): **thay mọi số liệu tự chọn ở Phase 1** bằng số chuẩn, thêm 3 Đêm và tính năng mới | v1.1 |
+| 3 | [Ticket-03 "Đèn cạn dầu"](docs/tickets/ticket-03.md) (Change Request): đèn có dầu và có thể tắt; thắng lúc bình minh khi số đèn sáng ≥ 60%; điểm mới; sức chứa tăng dần; chế độ mù màu. **Ghi đè** các luật thắng, điểm, vùng an toàn và `wander` của Ticket-02. Quyết định: [ADR 0001](docs/adr/0001-lantern-fuel-and-dawn-win.md). Thay đổi phá vỡ tương thích: [CHANGELOG](CHANGELOG.md). Giả định R1–R13 và tiêu chí nghiệm thu: [docs/notes/phase-3.md](docs/notes/phase-3.md) | v1.2 |
+
+> Khi Ticket-03 mâu thuẫn với các mục B* hoặc AC2.* bên dưới, **Ticket-03 thắng**. Cụ thể: B5 (`wander` đứng yên) đã bị thay, AC2.* về điểm và thắng `all_lit` không còn hiệu lực.
 
 ## Luật hiện hành (Phase 2)
 

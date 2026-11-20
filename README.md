@@ -41,14 +41,22 @@ Chế độ dev có hot reload: `npm run dev`.
 - **Rơi khỏi đảo:** mất 1 Ngọn Lửa và toàn bộ đom đóm, sau 1 giây hồi sinh ở điểm xuất phát.
 - **Gió Lạc** (Đêm 2, 3): đuổi khi Mây mang từ 5 đom đóm trở lên và cướp tới 3 con. Tỏa Sáng làm nó bỏ chạy, hoặc thả lại số đã cướp.
 - **Bùa Gió** (Đêm 2, 3): trong 10 giây, Mây chạy 7,2 m/s và lướt không cần hồi chiêu.
-- **Thắng:** thắp hết đèn. **Thua:** hết Ngọn Lửa, hoặc bình minh tới mà chưa thắp hết. Thua thì chơi lại Đêm đó. Thắng Đêm 3 thì hiện màn hình Bình Minh với tổng điểm.
+- **Đèn cạn dầu (Phase 3):**
+  - Đèn vừa thắp có 100 dầu và hao 1 đơn vị mỗi giây.
+  - Nhấn **E** ở đèn đang sáng để châm dầu: mỗi đom đóm thêm 10 dầu.
+  - Đèn dưới 30 dầu sẽ nhấp nháy và mất vùng an toàn. Bóng Mực tới hút dầu, mỗi con 5 đơn vị mỗi giây.
+  - Hết dầu thì đèn tắt. Thắp lại chỉ cần 5 đom đóm.
+- **Sức chứa** = 10 + 2 × số lần thắp thành công trong Đêm, tối đa 20.
+- **Thắng:** còn sống tới bình minh (4 / 4,5 / 5 phút) và số đèn đang sáng đạt ít nhất 60% (3/5, 4/6, 5/7). Thắp đủ đèn **không** kết thúc Đêm sớm.
+- **Thua:** hết Ngọn Lửa, hoặc tới bình minh mà số đèn sáng chưa đủ. Thua thì chơi lại Đêm đó. Thắng Đêm 3 thì hiện màn hình Bình Minh với tổng điểm.
+- **Cài đặt** có "Bảng màu dễ phân biệt" cho người mù màu.
 
 | Sự kiện | Điểm |
 |---|---|
-| Mỗi đom đóm **nạp vào đèn** | +10 |
-| Thắp 1 đèn | +100 |
-| Mỗi Bóng Mực trúng Tỏa Sáng (mỗi lần) | +5 |
-| Khi thắng: mỗi giây còn lại | +2 |
+| Mỗi đom đóm nạp vào đèn (thắp, thắp lại, châm dầu) | +5 |
+| Thắp lần đầu / thắp lại | +100 / +40 |
+| Bóng Mực trúng Tỏa Sáng | +5 (tổng +15 nếu nó đang hút dầu) |
+| Khi thắng: mỗi đèn đang sáng | +50 + floor(dầu) |
 | Khi thắng: mỗi Ngọn Lửa còn lại | +50 |
 
 Tổng điểm là tổng điểm các Đêm đã thắng. **Cài đặt** (âm lượng, độ nhạy chuột) được lưu giữa các lần mở game.
