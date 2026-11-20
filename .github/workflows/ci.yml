@@ -16,4 +16,4 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       # real CLI, every scenario twice (determinism) + expectations
-      - run: npm run verify -- 1 --no-build
+      - run: npm run verify -- 2 --no-build

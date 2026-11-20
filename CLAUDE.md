@@ -1,7 +1,7 @@
 # CLAUDE.md — Đảo Đèn Lồng (Day 12 AI SDLC lab)
 
-3D game (TypeScript + Three.js) with a headless mode graded by hidden tests against **Test Contract v1.0**.
-Lab rules: [README](README.md) · [GUIDE](GUIDE.md) · [RUBRIC](RUBRIC.md) · [SUBMISSION](SUBMISSION.md). Living spec: [SPEC.md](SPEC.md).
+3D game (TypeScript + Three.js) with a headless mode graded by hidden tests against **Test Contract v1.1** (3 nights).
+Lab rules: [LAB-README](LAB-README.md) · [GUIDE](GUIDE.md) · [RUBRIC](RUBRIC.md) · [SUBMISSION](SUBMISSION.md). Living spec: [SPEC.md](SPEC.md). Ticket text (verbatim): [docs/tickets/](docs/tickets/) — quote it, never paraphrase numbers from memory.
 
 ## Commands
 
@@ -9,9 +9,15 @@ Lab rules: [README](README.md) · [GUIDE](GUIDE.md) · [RUBRIC](RUBRIC.md) · [S
 npm ci && npm run build        # build_cmd: web -> dist/web, headless -> dist/headless.js
 npm run dev                    # play locally (Vite)
 npm test                       # vitest: unit + scenario + determinism + contract-sync
-npm run verify -- 1            # build + run tests/scenarios via dist/headless.js, twice, diff, write docs/proof/phase-1/
-node dist/headless.js --seed 1 --night 1 --ticks 600 --out out.jsonl
+npm run verify -- N            # build + run ALL tests/scenarios (old phases = regression) via dist/headless.js, twice, diff -> docs/proof/phase-N/
+node dist/headless.js --seed 1 --night 3 --ticks 600 --out out.jsonl
 ```
+
+## Where things live
+
+- `src/sim/tuning.ts` contract numbers (`TUNING`) + ticket constants in ticks (`C`); `src/sim/maps.ts` the 3 standard maps (`topAt` terrain).
+- `src/sim/step.ts` follows Ticket-02's **mandatory 12-step tick order**; keep the numbered comments in sync with the ticket.
+- Timer convention: a state set at tick T with N ticks shows in snapshots for ticks T..T+N-1 (decrement happens in step 2 of later ticks).
 
 ## Architecture rules (hard)
 

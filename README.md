@@ -2,7 +2,7 @@
 
 > Video demo: *(sẽ thêm ở Phase 4)* · Bài lab Day 12 AI SDLC, cá nhân: Nguyễn Gia Bảo, 2A202603647 · Đề bài lab: [LAB-README.md](LAB-README.md)
 
-Game 3D góc nhìn thứ ba. Mây, người giữ đèn nhỏ tuổi đội nón lá, chạy khắp Đảo Bến gom đom đóm để thắp lại 5 Đèn Lồng Lớn trước bình minh, đồng thời né và xua Bóng Mực.
+Game 3D góc nhìn thứ ba. Mây, người giữ đèn nhỏ tuổi đội nón lá, đi qua ba hòn đảo (Đảo Bến, Đảo Cau, Đảo Chuông) gom đom đóm để thắp lại các Đèn Lồng Lớn trước bình minh. Trên đường đi, Mây phải né và xua Bóng Mực, đồng thời giữ đom đóm khỏi bị Gió Lạc cướp.
 
 ## Cài đặt và chạy (3 lệnh)
 
@@ -23,45 +23,54 @@ Chế độ dev có hot reload: `npm run dev`.
 | W A S D | Di chuyển (theo hướng camera) |
 | ← → hoặc kéo chuột | Xoay camera |
 | Space | Nhảy |
+| Shift | Lướt (14 m/s trong 0,2 giây, hồi chiêu 1,5 giây) |
 | E | Nạp đom đóm vào đèn gần nhất |
-| F hoặc click chuột trái | Tỏa sáng xua Bóng Mực (tốn 1 đom đóm, hồi chiêu 1 giây) |
-| R | Chơi lại |
+| F hoặc click chuột trái | Tỏa Sáng xua Bóng Mực (tốn 3 đom đóm, hồi chiêu 3 giây) |
+| Esc / P | Tạm dừng: Tiếp tục / Chơi lại Đêm / Cài đặt / Về menu |
 
-## Luật chơi và cách tính điểm
+## Luật chơi và cách tính điểm (số chuẩn Ticket-02)
 
-- Đom đóm được nhặt tự động khi đi qua, mang tối đa **5** con.
-- Mỗi đèn cần **5** đom đóm. Đứng gần đèn (≤ 2 m) và nhấn **E** để nạp.
-- Bóng Mực đuổi theo Mây. Bị chạm thì mất 1 ngọn lửa (có 3), rơi một nửa số đom đóm đang mang, rồi bất tử 1,5 giây.
-- Tỏa sáng làm Bóng Mực trong bán kính 6 m choáng 3 giây và bị đẩy lùi 4 m.
-- Bóng Mực không vào được vùng 4 m quanh đèn **đã thắp**.
-- **Thắng:** thắp đủ 5 đèn. **Thua:** hết ngọn lửa, hoặc bình minh tới (sau 5 phút) mà chưa thắp hết.
+- **Ba Đêm** chơi nối tiếp:
+  - Đảo Bến: 5 đèn, 5 phút.
+  - Đảo Cau: hai đảo nối bằng cầu tre và bục nhảy, 6 đèn, 5 phút 30 giây.
+  - Đảo Chuông: 3 tầng, có dốc, bục nhảy và gió mạnh, 7 đèn, 6 phút.
+- **Đom đóm:** nhặt tự động khi đi qua, mang tối đa **10** con. Mỗi đèn cần **10** con và nhớ tiến độ nạp. Đứng gần đèn (≤ 2 m) rồi nhấn **E** để nạp.
+- **Bóng Mực** đuổi khi Mây ở trong 12 m. Bị chạm thì mất 1 Ngọn Lửa (có 3), rơi một nửa số đom đóm ra quanh Mây (nhặt lại được trong 8 giây), rồi bất tử 1,5 giây.
+- **Tỏa Sáng** làm Bóng Mực trong 5 m choáng 2 giây và bị đẩy lùi 4 m.
+- **Vùng an toàn:** Bóng Mực không vào được vùng 6 m quanh đèn đã thắp.
+- **Rơi khỏi đảo:** mất 1 Ngọn Lửa và toàn bộ đom đóm, sau 1 giây hồi sinh ở điểm xuất phát.
+- **Gió Lạc** (Đêm 2, 3): đuổi khi Mây mang từ 5 đom đóm trở lên và cướp tới 3 con. Tỏa Sáng làm nó bỏ chạy, hoặc thả lại số đã cướp.
+- **Bùa Gió** (Đêm 2, 3): trong 10 giây, Mây chạy 7,2 m/s và lướt không cần hồi chiêu.
+- **Thắng:** thắp hết đèn. **Thua:** hết Ngọn Lửa, hoặc bình minh tới mà chưa thắp hết. Thua thì chơi lại Đêm đó. Thắng Đêm 3 thì hiện màn hình Bình Minh với tổng điểm.
 
 | Sự kiện | Điểm |
 |---|---|
-| Nhặt 1 đom đóm | +10 |
+| Mỗi đom đóm **nạp vào đèn** | +10 |
 | Thắp 1 đèn | +100 |
-| Mỗi Bóng Mực bị choáng | +20 |
-| Khi thắng: mỗi giây còn lại | +1 |
-| Khi thắng: mỗi ngọn lửa còn lại | +50 |
+| Mỗi Bóng Mực trúng Tỏa Sáng (mỗi lần) | +5 |
+| Khi thắng: mỗi giây còn lại | +2 |
+| Khi thắng: mỗi Ngọn Lửa còn lại | +50 |
+
+Tổng điểm là tổng điểm các Đêm đã thắng. **Cài đặt** (âm lượng, độ nhạy chuột) được lưu giữa các lần mở game.
 
 Luật chi tiết và giả định: [SPEC.md](SPEC.md).
 
-## Chế độ headless (Test Contract v1.0)
+## Chế độ headless (Test Contract v1.1)
 
 Khai báo: [game.contract.json](game.contract.json). Sau `npm ci && npm run build`:
 
 ```bash
-node dist/headless.js --seed 1 --night 1 --ticks 600 --out out.jsonl \
+node dist/headless.js --seed 1 --night 1|2|3 --ticks 600 --out out.jsonl \
   [--scenario s.json] [--inputs i.json] [--snapshot-every 10]
 ```
 
-Kiểm chứng end-to-end: `npm run verify -- 1` chạy mọi scenario trong `tests/scenarios/` qua CLI thật hai lần (kiểm tra tất định) và ghi bằng chứng vào [docs/proof/phase-1/](docs/proof/phase-1/summary.md).
+Kiểm chứng end-to-end: `npm run verify -- 2` chạy **mọi** scenario trong `tests/scenarios/` (gồm cả Phase 1 để kiểm tra hồi quy) qua CLI thật, mỗi scenario hai lần để kiểm tra tất định, và ghi bằng chứng vào [docs/proof/phase-2/](docs/proof/phase-2/summary.md). Một Đêm đầy đủ 21.600 tick chạy khoảng 0,25 giây.
 
-`tuning`: mọi trường đều có giá trị thật. `fall_enabled: false` vì người chơi bị giữ trong đảo, không có rơi, nên không bao giờ phát `player_hit` với `by: "fall"`.
+`tuning` khớp số chuẩn của Ticket-02 (test ép khớp). Giả định cho những chỗ ticket chưa nói rõ: [SPEC.md](SPEC.md) mục B1–B19.
 
 ## Sáng tạo của tôi
 
-Phase 1 tập trung làm đúng phần lõi, chưa thêm sáng tạo.
+Chưa thêm sáng tạo ngoài yêu cầu: Phase 1 và 2 tập trung làm đúng phần lõi và contract. Âm thanh được tổng hợp bằng WebAudio, không dùng file asset.
 
 ## Tài liệu dự án
 

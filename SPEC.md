@@ -1,36 +1,57 @@
 # SPEC: Đảo Đèn Lồng
 
-Spec sống: cập nhật **trước** code mỗi khi ticket đổi. Nguồn: PRD-0 + Test Contract v1.0 (lab board, Phase 1). Số liệu: `src/sim/tuning.ts` = `game.contract.json`.
+Spec sống: cập nhật **trước** code mỗi khi ticket đổi. Số liệu: `src/sim/tuning.ts` = `game.contract.json` (test ép khớp). Ticket gốc: [docs/tickets/](docs/tickets/).
 
-## Luật Phase 1 (Đêm 1, Đảo Bến)
+| Phase | Nguồn | Contract |
+|---|---|---|
+| 1 | PRD-0 | v1.0 |
+| 2 | [Ticket-02 "Ba hòn đảo"](docs/tickets/ticket-02.md): **thay mọi số liệu tự chọn ở Phase 1** bằng số chuẩn, thêm 3 Đêm và tính năng mới | v1.1 |
 
-Giả định (A*) là chỗ PRD-0 mơ hồ, được Codex duyệt thay người dùng (xem `docs/notes/phase-1.md`).
+## Luật hiện hành (Phase 2)
 
-| # | Luật |
+Số liệu, bản đồ và thứ tự 12 bước trong một tick lấy **nguyên văn** từ Ticket-02; xem bảng trong ticket. Dưới đây chỉ ghi các **giả định** cho chỗ ticket chưa nói rõ (Codex duyệt Q1–Q23 thay người dùng, xem `docs/notes/phase-2.md`).
+
+| # | Giả định |
 |---|---|
-| A1 | Đảo tròn bán kính 40 m. `fall_enabled=false`: người chơi bị giữ trong đảo, không rơi. |
-| A2 | 5 đèn L1..L5 trên ngũ giác bán kính 25 m, L1 tại (0,0,25). |
-| A3 | Ngẫu nhiên theo seed: 30 đom đóm lúc đầu, sinh thêm để luôn ≥20; 3 Bóng Mực lúc đầu, +1 mỗi 45 s, tối đa 5 (`shade_spawned`). `random_motes=false` / `random_shades=false` tắt hẳn việc sinh thêm. |
-| A4 | Nhặt đom đóm **tự động** khi trong `pickup_radius` và `carried < carry_capacity`. +`per_mote`. |
-| A5 | `interact` (cạnh lên) nạp vào đèn **chưa thắp gần nhất** trong `interact_radius`: `amount = min(carried, lantern_cost − deposited)`. Đủ `lantern_cost` → thắp, +`per_lantern`. |
-| A6 | `pulse` (cạnh lên, hết hồi chiêu, `carried ≥ pulse_cost`): trừ `pulse_cost` đom đóm; mọi Bóng Mực trong `pulse_radius` bị choáng `pulse_stun_s` và đẩy xa `pulse_push_m` theo hướng ra xa người chơi; +`per_stun` mỗi con. Không đủ ánh sáng → không có gì, không phát sự kiện. |
-| A7 | Thắng: thắp đủ 5 đèn (`all_lit`), cộng `per_second_left × floor(time_left)` + `per_flame_left × flames`. Thua: hết ngọn lửa (`no_flames`), hoặc hết thời lượng Đêm (`dawn`). |
-| A8 | Bóng Mực luôn đuổi người chơi với `shade_speed`; không vào được bán kính `safe_radius` của đèn **đã thắp** (bị đẩy ra mép). Bóng Mực choáng thì đứng yên, không gây sát thương. |
-| A9 | Bị chạm (`≤ shade_hit_radius`, không bất tử): −1 ngọn lửa, rơi `floor(carried × hit_drop_ratio)` đom đóm (mất hẳn), bất tử `invuln_s`. Tối đa 1 lần chạm mỗi tick. |
-| A10 | Nhảy chỉ đổi trục Y; mọi luật dùng khoảng cách XZ nên nhảy không né được Bóng Mực. |
-| A12 | Scenario đã ở trạng thái kết thúc (5 đèn `lit` sẵn, `flames: 0`, `time_left_s: 0`) vẫn là `playing` ở tick 0 (dựng scenario không phát sự kiện); `game_over` xảy ra ở bước đầu tiên (tick 1). Với `--ticks 0` thì `end.state = playing`. |
-| A13 | Choáng kéo dài đúng `pulse_stun_s × 60` tick tính từ tick tỏa sáng; nhiều vùng an toàn chồng nhau được giải lặp để Bóng Mực ra ngoài mọi vùng. |
-| A11 | Thứ tự trong một tick: hẹn giờ → di chuyển/nhảy → nhặt → nạp → tỏa sáng → Bóng Mực → va chạm → sinh thêm → kết thúc. |
+| B1 | Tăng tốc và dừng tức thì (0 s, thỏa "≤ 0.1 s"), cả trên không. |
+| B2 | Hướng quay mặt ban đầu là +Z, cập nhật theo hướng di chuyển. Lướt theo hướng input hiện tại, nếu đứng yên thì theo hướng mặt. Lướt trên không: vy = 0, không trọng lực. |
+| B3 | Trần 30 đom đóm chỉ tính loại `random`. "Điểm trống" là điểm chưa có đom đóm random. 20 điểm ban đầu chọn bằng RNG theo seed. |
+| B4 | Tâm Bóng Mực / Gió Lạc khi sinh = mặt đất + 1.0 m; độ cao giữ nguyên sau đó (scenario cho `y` thì giữ đúng `y` đó). |
+| B5 | Bóng Mực mới sinh ở `spawning` 60 tick (không di chuyển, không gây sát thương, vẫn bị Tỏa Sáng). `wander` = đứng yên. Phát hiện/bỏ đuổi tính theo XZ. Scenario không ghi `state` → `wander`. |
+| B6 | Recoil: lùi thẳng ra xa Mây 2 m chia đều 60 tick (bước đầu ngay tick đánh), không gây sát thương. |
+| B7 | Thời lượng trạng thái: choáng hiển thị 120 tick (tick kích hoạt đến +119), recoil 60, spawning 60, flee 240 (hoặc 120 sau khi thả đồ), đom đóm rơi 480 tick, chờ hồi sinh 60. |
+| B8 | Snapshot: `player.invuln` là boolean, các trường `*_s` tính bằng giây (3 chữ số). Khi không có gió: `wind = {active:false, dir_deg:null}`. |
+| B9 | `night_start {night}` mang `tick: 0`, ghi trước snapshot tick 0. Nếu đang tạm dừng lúc hết `--ticks` thì `end.state = "paused"`. |
+| B10 | Điểm xuất phát mọi Đêm là (0,0,0) theo contract. Ở Đêm 3, điểm này nằm trong tháp chuông, nên áp luật **"kẹt trong khối"**: nếu đang ở trong địa hình thì được đi ngang tự do ở độ cao hiện tại cho tới khi ra chỗ đứng hợp lệ. |
+| B11 | Địa hình: đứng trên mặt cao nhất ≤ y + 0.3 m. Mặt cao hơn mức đó là vách (chặn đi ngang, có trượt theo từng trục). Tháp chuông là vách cao 14 m. |
+| B12 | Gió Lạc: `idle` lượn vòng bán kính 3 m quanh điểm sinh với 2 m/s. Điểm sương là điểm sinh Bóng Mực của Đêm. Con đã `removed` vẫn ở lại trong mảng snapshot. |
+| B13 | Gió Đêm 3: cơn gió bắt đầu tại sim_tick 1800, 3600, … dài 300 tick, hướng chọn bằng RNG, cộng 2 m/s vào vận tốc ngang. Báo trước 120 tick (chỉ hiển thị và âm thanh). |
+| B14 | Rơi: `player_hit {by:"fall", flames, dropped:0, lost}`. Trong 60 tick chờ, Mây đứng yên tại chỗ rơi, không hành động, không nhặt, không bị chạm. |
+| B15 | Đom đóm rơi do bị đánh: góc và bán kính 1.5–2.5 m chọn bằng RNG; `y` = mặt đất tại điểm đó (trên khoảng không thì lấy `y` của Mây). |
+| B16 | Sự kiện `pulse`: `{stunned_ids, drifter_ids}`. Thứ tự sự kiện trong cùng tick theo thứ tự xử lý (ví dụ `drifter_drop` trước `pulse`). |
+| B17 | Vùng an toàn: Bóng Mực trong vùng khi đèn vừa thắp bị đẩy ra theo hướng tâm 0.2 m/tick (≤ 30 tick), không gây sát thương trong lúc đó. Bóng ngoài vùng bị chặn ở mép 6 m. Nhiều vùng chồng nhau được giải lặp. |
+| B18 | Scenario: `charms[] {id, pos?, available?, respawn_ticks?}`, `drifters[] {id?, pos, state?, stolen?, state_ticks_left?}`, `shades[] {…, state?, state_ticks_left?}`. |
+| B19 | Phiên bản chơi: tạm dừng chỉ dừng gọi `step()` (logic dừng hoàn toàn). Điểm tổng = tổng điểm các Đêm đã thắng. |
 
-## Tiêu chí nghiệm thu Phase 1
+## Tiêu chí nghiệm thu Phase 2 (Ticket-02 Phần 3 + contract)
 
 | ID | Làm A → thấy B | Kiểm chứng |
 |---|---|---|
-| AC1 | Đi qua đom đóm → `mote_picked`, carried +1, điểm +10 | `tests/rules.test.ts`, scenario `p1-collect-and-light` |
-| AC2 | Đứng cạnh đèn, nhấn nạp đủ 5 → `deposit`, `lantern_lit` | rules test, `p1-collect-and-light` |
-| AC3 | Tỏa sáng gần Bóng Mực → `pulse` có id, Bóng Mực `stunned` và bị đẩy, carried −1 | rules test, `p1-pulse-stun` |
-| AC4 | Bóng Mực chạm → `player_hit`, mất lửa, rơi đom đóm; hết lửa → `game_over lost no_flames` | rules test, `p1-hit-lose` |
-| AC5 | Thắp hết đèn → `game_over won all_lit`; hết giờ → `lost dawn` | rules test, `p1-collect-and-light`, `p1-dawn` |
-| AC6 | Cùng seed/scenario/inputs → output giống hệt; input/scenario sai → exit 2 | `tests/contract.test.ts`, `npm run verify` (chạy 2 lần, so sánh) |
-| AC7 | `tuning` trong `game.contract.json` khớp số game dùng | `tests/contract.test.ts` |
-| AC8 | Chơi được trong trình duyệt: đi, nhảy, camera 3D, HUD, thắng/thua, chơi lại (R) | Chơi thử thủ công + ảnh chụp |
+| AC2.1 Số chuẩn | `tuning` khớp Ticket-02; chạy 6.0 m/s, nhảy 7 m/s, lướt 14 m/s × 12 tick, hồi chiêu 90 tick | `contract.test`, `rules.test` (movement), `p2-dash` |
+| AC2.2 Rơi | Ra khỏi đảo → `player_hit by:fall` + `lost`, hồi sinh sau 60 tick, bất tử | `rules.test` (falling), `p2-fall-respawn` |
+| AC2.3 Bóng Mực | Lịch sinh 300 + 480k; spawning → wander/chase 12/18 m; trúng → recoil, −1 lửa, rơi đom đóm; vùng an toàn 6 m | `rules.test` (shades), `p2-shade-schedule`, `p2-safe-zone` |
+| AC2.4 Tỏa Sáng | 3 đom đóm, 3D 5 m, choáng 120 tick, đẩy 4 m/15 tick, +5/con | `rules.test` (pulse), `p1-pulse-stun` |
+| AC2.5 Gió Lạc | Đuổi khi mang ≥ 5 trong 15 m; cướp min(3, mang); Tỏa Sáng → flee / thả đồ | `rules.test` (drifters), `p2-drifter-steal`, `p2-drifter-pulse-drop` |
+| AC2.6 Bùa Gió | Nhặt → 600 tick, 7.2 m/s, lướt không hồi chiêu; xuất hiện lại sau 2700 tick | `rules.test` (charms), `p2-charm` |
+| AC2.7 Ba Đêm | `--night 1/2/3` dùng đúng bản đồ chuẩn (đèn, điểm sinh, bục nhảy, tầng/dốc, gió) | `rules.test` (maps), `contract.test` (format), `p2-night2-pad`, `p2-night3-full` |
+| AC2.8 Tạm dừng | `pause` → `paused`, `state:"paused"`, sim_tick/thời gian đứng yên; nhấn lại → `resumed` | `rules.test` (pause), `p2-pause`; bản chơi: Esc/P mở menu |
+| AC2.9 Chuỗi 3 Đêm | Menu → giới thiệu (Ông Đăng) → chơi → kết quả → Đêm kế; thắng Đêm 3 → Bình Minh; thua → chơi lại Đêm | Chơi thử + ảnh chụp |
+| AC2.10 Cài đặt | Âm lượng, độ nhạy chuột lưu giữa các lần mở (localStorage) | Chơi thử: đổi, tải lại trang |
+| AC2.11 Âm thanh | Nhạc nền và 10 hiệu ứng theo ticket (tổng hợp WebAudio) | Chơi thử |
+| AC2.12 HUD + bảng màu | Bố cục HUD, đồng hồ đỏ nhấp nháy khi ≤ 30 s, nhắc nạp đèn, mũi tên tới đèn; màu theo bảng chuẩn; ánh sáng môi trường = 0.15 + 0.55 × tỉ lệ đèn sáng | Ảnh chụp; `src/render/main.ts` (hằng `P`) |
+| AC2.13 Hiệu năng | Một Đêm đủ 21.600 tick ≤ 30 s; bản chơi ≥ 30 FPS ở 1280×720 | `contract.test` (performance), đo CLI 243 ms; FPS: bộ đếm trong HUD |
+| AC2.14 Hồi quy | Các scenario Phase 1 vẫn đạt khi đổi sang số chuẩn | `p1-*` trong `npm run verify -- 2` |
+
+## Lịch sử: Phase 1 (PRD-0, contract v1.0)
+
+Các giả định A1–A13 của Phase 1 nằm ở tag `phase-1`. Ticket-02 thay toàn bộ số liệu và phần lớn luật tự chọn (đảo, đèn, sức chứa, chi phí, choáng, điểm, rơi). Những gì còn giữ: thứ tự `interact` chỉ xét đèn chưa sáng; đầu vào hỏng → mã thoát 2; tọa độ làm tròn 3 chữ số.
