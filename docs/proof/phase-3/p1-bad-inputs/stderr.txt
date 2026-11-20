@@ -1,0 +1,7 @@
+error: inputs: invalid format: [
+  {
+    "code": "custom",
+    "message": "frame ticks must strictly increase (index 1)",
+    "path": []
+  }
+]
