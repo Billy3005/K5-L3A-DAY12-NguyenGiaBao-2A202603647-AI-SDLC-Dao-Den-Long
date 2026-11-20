@@ -56,12 +56,14 @@ Các scenario `p1-hit-lose`, `p1-dawn`, `p1-bad-inputs` vẫn đạt mà không 
 
 ## Token và chi phí (ước tính)
 
+Số Claude Code đếm từ transcript của session (`usage` của từng phản hồi, model claude-opus-5-5, chia theo giờ gắn tag phase). "Đọc cache" là ngữ cảnh đọc lại từ prompt cache, rẻ hơn khoảng 10 lần so với token mới.
+
 | Công cụ | Việc | Token |
 |---|---|---|
 | Codex | Lô 23 quyết định (session mới) | 14,982 |
 | Codex | Review Phase 2 (session mới, ticket và nguồn đưa thẳng vào prompt, khoảng 60 KB) | 30,971 |
 | **Codex tổng Phase 2** | | **≈ 46k** (Phase 1: ≈ 347k) |
-| Claude Code | Đọc ticket, code, test, kiểm chứng | *điền từ `/cost`* |
+| Claude Code | Đọc ticket, code, test, kiểm chứng | ≈ 301k mới (output 139k + ghi cache 162k) · đọc cache 11.6M · 41 lượt model |
 
 **Cách tiết kiệm:**
 - Ticket lưu thành file để không phải dán lại vào prompt.

@@ -84,8 +84,10 @@ Bài học: bản diff gửi review phải gồm cả `index.html`. 2/5 báo sai
 
 ## Token (ước tính)
 
+Số Claude Code đếm từ transcript của session (`usage` của từng phản hồi, model claude-opus-5-5, chia theo giờ gắn tag phase). "Đọc cache" là ngữ cảnh đọc lại từ prompt cache, rẻ hơn khoảng 10 lần so với token mới.
+
 | Công cụ | Việc | Token |
 |---|---|---|
 | Codex | Lô D1–D15 (session mới) | 22.974 |
 | Codex | Review Phase 4 | 20.427 |
-| Claude Code | Đọc ticket, code, test, đo, tài liệu | *điền từ `/cost`* |
+| Claude Code | Đọc ticket, code, test, đo, tài liệu | ≈ 424k mới (output 140k + ghi cache 284k) · đọc cache 23.6M · 102 lượt model |

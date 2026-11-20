@@ -51,8 +51,10 @@ Lỗi tìm thấy khi chụp: bản render vẽ cột đèn theo vị trí mặc
 
 ## Token (ước tính)
 
+Số Claude Code đếm từ transcript của session (`usage` của từng phản hồi, model claude-opus-5-5, chia theo giờ gắn tag phase). "Đọc cache" là ngữ cảnh đọc lại từ prompt cache, rẻ hơn khoảng 10 lần so với token mới.
+
 | Công cụ | Việc | Token |
 |---|---|---|
 | Codex | Lô R1–R13 (session mới) | 21,610 |
 | Codex | Review Phase 3 | 21,392 |
-| Claude Code | Đọc ticket, code, test, tài liệu | *điền từ `/cost`* |
+| Claude Code | Đọc ticket, code, test, tài liệu | ≈ 209k mới (output 80k + ghi cache 130k) · đọc cache 18.4M · 43 lượt model |

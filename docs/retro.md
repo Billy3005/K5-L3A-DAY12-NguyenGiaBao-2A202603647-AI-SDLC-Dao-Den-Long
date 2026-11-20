@@ -53,7 +53,10 @@ Mỗi phase đều được gắn tag đúng giờ, và CI xanh trên Ubuntu l�
 | Công cụ | P1 | P2 | P3 | P4 | Tổng |
 |---|---|---|---|---|---|
 | Codex (đo từ CLI) | ~347k | ~46k | ~43k | ~43k | **~479k** |
-| Claude Code | *điền từ `/cost`* | | | | |
+| Claude Code: output + ghi cache | 263k | 301k | 209k | 424k | **≈ 1,2M** |
+| Claude Code: đọc cache | 8,5M | 11,6M | 18,4M | 23,6M | **≈ 62M** |
+
+Số Claude đếm từ transcript của session (248 phản hồi, claude-opus-5-5). Lượng đọc cache tăng dần qua các phase vì ngữ cảnh hội thoại dài ra. Một lần nén ngữ cảnh (`/compact`) trước Phase 4 đã giảm bớt phần này.
 
 Cách tiết kiệm token:
 - Không resume session dài; mỗi lần gọi Codex là một session mới.

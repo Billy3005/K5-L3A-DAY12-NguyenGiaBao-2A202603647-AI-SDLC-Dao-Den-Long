@@ -40,6 +40,8 @@ Bằng chứng headless: [docs/proof/phase-1/summary.md](../proof/phase-1/summar
 
 ## Token và chi phí (ước tính)
 
+Số Claude Code đếm từ transcript của session (`usage` của từng phản hồi, model claude-opus-5-5, chia theo giờ gắn tag phase). "Đọc cache" là ngữ cảnh đọc lại từ prompt cache, rẻ hơn khoảng 10 lần so với token mới.
+
 | Công cụ | Việc | Token |
 |---|---|---|
 | Codex (OpenAI) | Hỏi lại nhiệm vụ (resume session dài) | 144,509 |
@@ -47,7 +49,7 @@ Bằng chứng headless: [docs/proof/phase-1/summary.md](../proof/phase-1/summar
 | Codex | Review lần 1, thất bại vì sandbox | 29,975 |
 | Codex | Review lần 2, mã nguồn đưa thẳng vào prompt | 26,173 |
 | **Codex tổng** | | **≈ 347k** |
-| Claude Code | Toàn bộ phần đọc tài liệu, code, kiểm chứng | *điền từ `/cost` cuối phase* |
+| Claude Code | Toàn bộ phần đọc tài liệu, code, kiểm chứng | ≈ 263k mới (output 91k + ghi cache 172k) · đọc cache 8.5M · 62 lượt model |
 
 **Cách đã tiết kiệm:**
 - Gom 9 quyết định vào một lượt Codex, trả lời dạng `OK`/`CHANGE`.
