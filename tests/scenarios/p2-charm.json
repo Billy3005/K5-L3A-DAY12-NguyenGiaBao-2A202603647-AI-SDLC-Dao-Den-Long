@@ -1,0 +1,38 @@
+{
+  "requirement": "Ticket-02 Bùa Gió: nhặt như đom đóm, hiệu lực 600 tick; Đêm 2 tại (35,0,0)",
+  "seed": 1,
+  "night": 2,
+  "ticks": 10,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "random_drifters": false,
+    "wind_enabled": false,
+    "motes": [],
+    "shades": [],
+    "drifters": [],
+    "charms": [
+      {
+        "id": "C1"
+      }
+    ],
+    "player": {
+      "pos": [
+        35,
+        0,
+        0
+      ]
+    }
+  },
+  "expect_exit": 0,
+  "expect_events": [
+    {
+      "name": "charm_picked",
+      "tick": 1,
+      "data": {
+        "charm_id": "C1",
+        "charm_ticks": 600
+      }
+    }
+  ]
+}

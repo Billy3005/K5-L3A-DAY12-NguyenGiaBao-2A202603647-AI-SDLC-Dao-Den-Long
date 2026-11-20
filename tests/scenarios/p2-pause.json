@@ -1,0 +1,50 @@
+{
+  "requirement": "Ticket-02 Tạm dừng: paused/resumed, tick tăng nhưng sim dừng",
+  "seed": 1,
+  "ticks": 40,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "random_drifters": false,
+    "wind_enabled": false,
+    "motes": [],
+    "shades": [],
+    "drifters": [],
+    "charms": []
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 10,
+        "pause": true
+      },
+      {
+        "tick": 11,
+        "pause": false
+      },
+      {
+        "tick": 20,
+        "pause": true
+      },
+      {
+        "tick": 21,
+        "pause": false
+      }
+    ]
+  },
+  "expect_exit": 0,
+  "expect_events": [
+    {
+      "name": "paused",
+      "tick": 11
+    },
+    {
+      "name": "resumed",
+      "tick": 21
+    }
+  ],
+  "expect_end": {
+    "ticks": 40,
+    "state": "playing"
+  }
+}

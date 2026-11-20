@@ -1,0 +1,50 @@
+{
+  "requirement": "Ticket-02 Lướt: 14 m/s × 12 tick, hồi chiêu 90 tick từ lúc bắt đầu",
+  "seed": 1,
+  "ticks": 100,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "random_drifters": false,
+    "wind_enabled": false,
+    "motes": [],
+    "shades": [],
+    "drifters": [],
+    "charms": []
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "dash": true
+      },
+      {
+        "tick": 1,
+        "dash": false
+      },
+      {
+        "tick": 30,
+        "dash": true
+      },
+      {
+        "tick": 31,
+        "dash": false
+      },
+      {
+        "tick": 90,
+        "dash": true
+      }
+    ]
+  },
+  "expect_exit": 0,
+  "expect_events": [
+    {
+      "name": "dash",
+      "tick": 1
+    },
+    {
+      "name": "dash",
+      "tick": 91
+    }
+  ]
+}

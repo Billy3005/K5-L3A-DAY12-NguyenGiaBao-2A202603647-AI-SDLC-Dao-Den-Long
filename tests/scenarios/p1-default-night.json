@@ -1,5 +1,5 @@
 {
-  "requirement": "Contract: đêm mặc định theo seed (đom đóm + Bóng Mực ngẫu nhiên); Bóng Mực đuổi và chạm người chơi chạy mù; tất định giữa hai lần chạy",
+  "requirement": "Đêm 1 mặc định theo seed; người chạy mù ra khỏi bán kính 40 m thì rơi (Ticket-02: fall bật); tất định giữa hai lần chạy",
   "seed": 12345,
   "ticks": 3600,
   "snapshot_every": 120,
@@ -35,7 +35,7 @@
     {
       "name": "player_hit",
       "data": {
-        "by": "shade"
+        "by": "fall"
       }
     }
   ]

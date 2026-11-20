@@ -24,7 +24,7 @@ for (const file of readdirSync('tests/scenarios').filter((f) => f.endsWith('.jso
   const spec = JSON.parse(readFileSync(join('tests/scenarios', file), 'utf8'));
   const dir = join(outDir, name);
   mkdirSync(dir, { recursive: true });
-  const args = ['dist/headless.js', '--seed', String(spec.seed), '--night', '1', '--ticks', String(spec.ticks)];
+  const args = ['dist/headless.js', '--seed', String(spec.seed), '--night', String(spec.night ?? 1), '--ticks', String(spec.ticks)];
   if (spec.snapshot_every) args.push('--snapshot-every', String(spec.snapshot_every));
   if (spec.scenario) { writeFileSync(join(dir, 'scenario.json'), JSON.stringify(spec.scenario, null, 2)); args.push('--scenario', join(dir, 'scenario.json')); }
   if (spec.inputs) { writeFileSync(join(dir, 'inputs.json'), JSON.stringify(spec.inputs, null, 2)); args.push('--inputs', join(dir, 'inputs.json')); }
@@ -48,6 +48,10 @@ for (const file of readdirSync('tests/scenarios').filter((f) => f.endsWith('.jso
       while (i < evs.length && !isSubset(e, evs[i])) i++;
       if (i === evs.length) { problems.push(`missing event (in order): ${JSON.stringify(e)}`); break; }
       i++;
+    }
+    for (const name of spec.expect_no_events ?? []) {
+      const bad = evs.find((e) => e.name === name);
+      if (bad) problems.push(`unexpected event: ${JSON.stringify(bad)}`);
     }
     const end = lines.at(-1);
     if (end.type !== 'end') problems.push('last line is not end');

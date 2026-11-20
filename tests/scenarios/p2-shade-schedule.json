@@ -1,0 +1,32 @@
+{
+  "requirement": "Ticket-02 Lịch sinh Bóng Mực Đêm 1: 2 con tại tick 300, rồi mỗi 480 tick",
+  "seed": 3,
+  "ticks": 800,
+  "scenario": {
+    "random_motes": false
+  },
+  "expect_exit": 0,
+  "expect_events": [
+    {
+      "name": "shade_spawned",
+      "tick": 300,
+      "data": {
+        "id": "S1"
+      }
+    },
+    {
+      "name": "shade_spawned",
+      "tick": 300,
+      "data": {
+        "id": "S2"
+      }
+    },
+    {
+      "name": "shade_spawned",
+      "tick": 780,
+      "data": {
+        "id": "S3"
+      }
+    }
+  ]
+}

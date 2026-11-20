@@ -1,0 +1,40 @@
+{
+  "requirement": "Ticket-02 Gió Lạc: đuổi khi mang ≥5 trong 15 m, 7 m/s, chạm 1.2 m cướp min(3, mang)",
+  "seed": 1,
+  "night": 2,
+  "ticks": 30,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "random_drifters": false,
+    "wind_enabled": false,
+    "motes": [],
+    "shades": [],
+    "drifters": [
+      {
+        "id": "D1",
+        "pos": [
+          3,
+          1,
+          0
+        ]
+      }
+    ],
+    "charms": [],
+    "player": {
+      "carried": 6
+    }
+  },
+  "expect_exit": 0,
+  "expect_events": [
+    {
+      "name": "drifter_steal",
+      "tick": 16,
+      "data": {
+        "drifter_id": "D1",
+        "amount": 3,
+        "carried": 3
+      }
+    }
+  ]
+}

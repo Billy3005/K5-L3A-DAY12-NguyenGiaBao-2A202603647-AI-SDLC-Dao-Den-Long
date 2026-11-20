@@ -1,0 +1,13 @@
+{
+  "requirement": "Contract v1.1: một Đêm 3 đầy đủ (≤21.600 tick) chạy xong ≤30 s, tất định",
+  "seed": 9,
+  "night": 3,
+  "ticks": 21600,
+  "snapshot_every": 60,
+  "expect_exit": 0,
+  "expect_events": [
+    {
+      "name": "game_over"
+    }
+  ]
+}

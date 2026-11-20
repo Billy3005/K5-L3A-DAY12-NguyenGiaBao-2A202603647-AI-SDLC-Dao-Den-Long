@@ -1,0 +1,57 @@
+{
+  "requirement": "Ticket-02 Rơi khỏi đảo (Y<-10): -1 lửa, mất hết đom đóm (lost), chờ 60 tick rồi hồi sinh",
+  "seed": 1,
+  "ticks": 200,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "random_drifters": false,
+    "wind_enabled": false,
+    "motes": [],
+    "shades": [],
+    "drifters": [],
+    "charms": [],
+    "player": {
+      "pos": [
+        39.5,
+        0,
+        0
+      ],
+      "carried": 3
+    }
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "move": [
+          1,
+          0
+        ]
+      },
+      {
+        "tick": 10,
+        "move": [
+          0,
+          0
+        ]
+      }
+    ]
+  },
+  "expect_exit": 0,
+  "expect_events": [
+    {
+      "name": "player_hit",
+      "data": {
+        "by": "fall",
+        "flames": 2,
+        "dropped": 0,
+        "lost": 3
+      }
+    }
+  ],
+  "expect_end": {
+    "ticks": 200,
+    "state": "playing"
+  }
+}

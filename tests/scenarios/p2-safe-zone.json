@@ -1,0 +1,63 @@
+{
+  "requirement": "Ticket-02 Vùng an toàn 6 m: Bóng Mực trong vùng khi đèn vừa thắp bị đẩy ra, không gây sát thương",
+  "seed": 1,
+  "ticks": 300,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "random_drifters": false,
+    "wind_enabled": false,
+    "motes": [],
+    "shades": [
+      {
+        "id": "S1",
+        "pos": [
+          0.5,
+          1,
+          23.4
+        ]
+      }
+    ],
+    "drifters": [],
+    "charms": [],
+    "player": {
+      "pos": [
+        0,
+        0,
+        23
+      ],
+      "carried": 10
+    },
+    "lanterns": [
+      {
+        "id": "L1",
+        "pos": [
+          0,
+          0,
+          25
+        ]
+      }
+    ]
+  },
+  "inputs": {
+    "frames": [
+      {
+        "tick": 0,
+        "interact": true
+      }
+    ]
+  },
+  "expect_exit": 0,
+  "expect_events": [
+    {
+      "name": "lantern_lit",
+      "tick": 1,
+      "data": {
+        "lantern_id": "L1"
+      }
+    }
+  ],
+  "expect_no_events": [
+    "player_hit"
+  ]
+}
