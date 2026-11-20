@@ -1,0 +1,23 @@
+{
+  "contract_version": "1.3",
+  "avg_fps": 157.3,
+  "p1_low_fps": 49.7,
+  "frame_ms_p95": 12.2,
+  "frames": 4719,
+  "load_ms": 2127,
+  "peak_mem_mb": null,
+  "vsync_off": true,
+  "renderer": "Three.js r187 WebGL2 in chrome 157.0.8103.79; GPU: ANGLE (Intel, Intel(R) UHD Graphics (0x00004626) Direct3D11 vs_5_0 ps_5_0, D3D11)",
+  "os": "Windows_NT 10.0.26300 x64; 12th Gen Intel(R) Core(TM) i5-12500H x16; 8 GB RAM",
+  "mem_note": "Web build: Chromium runs the game in separate renderer/GPU processes whose RSS Playwright does not expose, so peak_mem_mb is null. js_heap_peak_mb is the page JS heap (performance.memory).",
+  "js_heap_peak_mb": 22,
+  "vsync_note": "Started with --disable-gpu-vsync --disable-frame-rate-limit; vsync_off is true only if the measured avg_fps exceeded 65 (not capped at 60 Hz).",
+  "scene": {
+    "seed": 42,
+    "duration_s": 30,
+    "warmup_s": 3,
+    "shades": 200,
+    "motes": 100,
+    "viewport": "1280x720"
+  }
+}
