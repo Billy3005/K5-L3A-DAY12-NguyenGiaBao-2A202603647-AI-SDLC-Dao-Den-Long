@@ -9,15 +9,15 @@ import { TUNING } from '../src/sim/tuning';
 const dir = mkdtempSync(join(tmpdir(), 'ddl-'));
 const tmp = (name: string, body: unknown) => { const p = join(dir, name); writeFileSync(p, typeof body === 'string' ? body : JSON.stringify(body)); return p; };
 
-describe('game.contract.json v1.1', () => {
+describe('game.contract.json v1.2', () => {
   it('tuning matches the numbers the game uses', () => {
     const c = JSON.parse(readFileSync('game.contract.json', 'utf8'));
-    expect(c.contract_version).toBe('1.1');
+    expect(c.contract_version).toBe('1.2');
     expect(c.tuning).toEqual(TUNING);
   });
 });
 
-describe('output format v1.1', () => {
+describe('output format v1.2', () => {
   for (const night of [1, 2, 3] as const) {
     it(`night ${night}: night_start at tick 0, snapshots every N, single end line, required fields`, () => {
       const lines = runHeadless({ seed: 42, night, ticks: 600, snapshotEvery: 10 }).map((l) => JSON.parse(l));
@@ -33,11 +33,13 @@ describe('output format v1.1', () => {
       expect(s.night).toBe(night);
       expect(Object.keys(s.player)).toEqual(expect.arrayContaining(['pos', 'vel', 'grounded', 'invuln', 'dash_cd_s', 'pulse_cd_s', 'charm_s', 'flames', 'carried']));
       expect(s.player.pos).toEqual([0, 0, 0]);
-      expect(s.time_left_s).toBe([300, 330, 360][night - 1]);
+      expect(s.time_left_s).toBe([240, 270, 300][night - 1]); // Ticket-03 durations
+      expect(s.player.capacity).toBe(10);
+      expect(s.lanterns[0]).toMatchObject({ lit: false, fuel: 0, ever_lit: false, relit_count: 0 });
       expect(s.lanterns).toHaveLength([5, 6, 7][night - 1]);
       expect(s.charms).toHaveLength([0, 1, 2][night - 1]);
       const shadeStates = new Set(snaps.flatMap((x) => x.shades.map((y: { state: string }) => y.state)));
-      for (const st of shadeStates) expect(['spawning', 'wander', 'chase', 'recoil', 'stunned']).toContain(st);
+      for (const st of shadeStates) expect(['spawning', 'wander', 'chase', 'recoil', 'stunned', 'drain']).toContain(st);
       expect(/\d\.\d{4,}/.test(JSON.stringify(lines))).toBe(false);
     });
   }
@@ -58,7 +60,7 @@ describe('determinism', () => {
 describe('performance', () => {
   it('a full night (21,600 ticks) runs well under 30 s', () => {
     const t0 = performance.now();
-    runHeadless({ seed: 1, night: 3, ticks: 21600, snapshotEvery: 10, scenario: { time_left_s: 360 } });
+    runHeadless({ seed: 1, night: 3, ticks: 21600, snapshotEvery: 10, scenario: { time_left_s: 360, random_shades: false } });
     const ms = performance.now() - t0;
     expect(ms).toBeLessThan(30000);
   });

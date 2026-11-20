@@ -83,12 +83,14 @@ describe('motes and lanterns', () => {
     const lines = run({ seed: 1, ticks: 1, scenario: quiet({ player: { carried: 10 }, motes: [[0, 0, 0]] }) });
     expect(evs(lines, 'mote_picked')).toHaveLength(0);
   });
-  it('deposit min(carried, missing), +10 per deposited mote, +100 on light', () => {
+  it('deposit min(carried, missing), +5 per mote (Ticket-03), +100 first light, fuel 100', () => {
     const lines = run({ seed: 1, ticks: 1, scenario: quiet({ player: { carried: 10 }, lanterns: [{ id: 'L1', pos: [0, 0, 2] }] }),
       inputs: { frames: [{ tick: 0, interact: true }] } });
     expect(evs(lines, 'deposit')[0].data).toEqual({ lantern_id: 'L1', amount: 10, deposited: 10 });
-    expect(evs(lines, 'lantern_lit')[0].data).toEqual({ lantern_id: 'L1' });
-    expect(end(lines).score).toBe(200);
+    expect(evs(lines, 'lantern_lit')[0].data).toEqual({ lantern_id: 'L1', relight: false });
+    expect(end(lines).score).toBe(150);
+    expect(snapAt(lines, 1).lanterns[0]).toMatchObject({ lit: true, fuel: 100, ever_lit: true, relit_count: 0 });
+    expect(snapAt(lines, 1).player.capacity).toBe(12);
   });
   it('partial deposit remembers progress; equidistant lanterns -> smaller id', () => {
     const lines = run({ seed: 1, ticks: 1, scenario: quiet({ player: { carried: 4 },
@@ -135,12 +137,14 @@ describe('pulse', () => {
 });
 
 describe('shades', () => {
-  it('detect at 12 m and chase at 4.0 m/s; beyond 12 m wander stays put', () => {
+  it('detect at 12 m and chase at 4.0 m/s; beyond 12 m wander walks to nearest unlit lantern (Ticket-03)', () => {
     const w = createWorld(1, 1, quiet({ shades: [{ id: 'S1', pos: [10, 1, 0] }, { id: 'S2', pos: [0, 1, -15] }] }));
     for (let i = 0; i < 60; i++) step(w, inp());
     near(w.shades[0].pos[0], 6);
     expect(w.shades[0].state).toBe('chase');
-    expect(w.shades[1]).toMatchObject({ state: 'wander', pos: [0, 1, -15] });
+    // S2 at (0,-15): L3 (14.7,-20.2) and L4 (-14.7,-20.2) tie at 15.59 m -> smaller id L3; moves 4 m toward it
+    expect(w.shades[1]).toMatchObject({ state: 'wander', target: 'L3' });
+    near(distXZ(w.shades[1].pos, [14.7, 0, -20.2]), Math.hypot(14.7, 5.2) - 4);
   });
   it('hit: -1 flame, drop floor(carried/2) into 1.5-2.5 m ring (ttl 8 s), invuln, recoil 2 m in 60 ticks', () => {
     const lines = run({ seed: 1, ticks: 61, scenario: quiet({ player: { carried: 5 }, shades: [{ id: 'S1', pos: [0.5, 1, 0] }] }) });
@@ -316,19 +320,12 @@ describe('pause', () => {
     expect(p15).toMatchObject({ state: 'paused', sim_tick: 10 });
     expect(p15.shades[0].pos).toEqual(snapAt(lines, 11).shades[0].pos);
     expect(end(lines)).toMatchObject({ ticks: 40, state: 'playing' });
-    expect(snapAt(lines, 40)).toMatchObject({ sim_tick: 30, time_left_s: 299.5 });
+    expect(snapAt(lines, 40)).toMatchObject({ sim_tick: 30, time_left_s: 239.5 }); // night 1 = 240 s (Ticket-03)
   });
 });
 
 describe('win / lose', () => {
-  it('win bonus floor(seconds left) x2 + 50 x flames; win beats dawn on the last tick', () => {
-    const lit = ['L1', 'L2', 'L3', 'L4'].map((id) => ({ id, lit: true }));
-    const sc = (t: number) => quiet({ player: { carried: 10 }, lanterns: [...lit, { id: 'L5', pos: [0, 0, 1] }], time_left_s: t });
-    const a = run({ seed: 1, ticks: 5, scenario: sc(100), inputs: { frames: [{ tick: 0, interact: true }] } });
-    expect(end(a)).toEqual({ type: 'end', ticks: 1, state: 'won', score: 100 + 100 + 99 * 2 + 3 * 50 });
-    const b = run({ seed: 1, ticks: 5, scenario: sc(1 / 60), inputs: { frames: [{ tick: 0, interact: true }] } });
-    expect(evs(b, 'game_over')[0].data).toEqual({ result: 'won', reason: 'all_lit' });
-  });
+  // Ticket-02 'all_lit' early win + time bonus test removed: Ticket-03 §3/§5 replaced both (see describe 'Ticket-03').
   it('dawn when time runs out', () => {
     const lines = run({ seed: 1, ticks: 100, scenario: quiet({ time_left_s: 1 }) });
     expect(evs(lines, 'game_over')[0]).toMatchObject({ tick: 60, data: { result: 'lost', reason: 'dawn' } });

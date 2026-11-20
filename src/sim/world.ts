@@ -6,17 +6,17 @@ import type { Charm, Drifter, DrifterState, Mote, Shade, ShadeState, Vec3, World
 export interface Scenario {
   player?: {
     pos?: Vec3; carried?: number; flames?: number;
-    invuln_ticks?: number; dash_cd_ticks?: number; pulse_cd_ticks?: number; charm_ticks?: number;
+    invuln_ticks?: number; dash_cd_ticks?: number; pulse_cd_ticks?: number; charm_ticks?: number; successful_lights?: number;
   };
   random_motes?: boolean;
   random_shades?: boolean;
   random_drifters?: boolean;
   wind_enabled?: boolean;
   motes?: Vec3[];
-  shades?: { id?: string; pos: Vec3; state?: ShadeState; state_ticks_left?: number }[];
+  shades?: { id?: string; pos: Vec3; state?: ShadeState; state_ticks_left?: number; target_lantern_id?: string }[];
   drifters?: { id?: string; pos: Vec3; state?: DrifterState; stolen?: number; state_ticks_left?: number }[];
   charms?: { id: string; pos?: Vec3; available?: boolean; respawn_ticks?: number }[];
-  lanterns?: { id: string; pos?: Vec3; deposited?: number; lit?: boolean }[];
+  lanterns?: { id: string; pos?: Vec3; deposited?: number; lit?: boolean; fuel?: number; ever_lit?: boolean }[];
   time_left_s?: number;
 }
 
@@ -25,8 +25,8 @@ export class ScenarioError extends Error {}
 export const mapOf = (w: World): NightMap => MAPS[w.night];
 export const idNum = (id: string) => Number(/\d+$/.exec(id)?.[0] ?? 0);
 
-export function newShade(id: string, pos: Vec3, state: ShadeState = 'wander', stateTicks = 0): Shade {
-  return { id, pos: [...pos] as Vec3, state, stateTicks, pushTicks: 0, pushDir: [1, 0], recoilDir: [1, 0], evictTicks: 0, evictFrom: null };
+export function newShade(id: string, pos: Vec3, state: ShadeState = 'wander', stateTicks = 0, target: string | null = null): Shade {
+  return { id, pos: [...pos] as Vec3, state, stateTicks, pushTicks: 0, pushDir: [1, 0], recoilDir: [1, 0], evictTicks: 0, evictFrom: null, evictStep: 0, target, drainTicks: 0 };
 }
 
 export function newDrifter(id: string, pos: Vec3, state: DrifterState = 'idle', stolen = 0, stateTicks = 0): Drifter {
@@ -85,12 +85,13 @@ export function createWorld(seed: number, night: 1 | 2 | 3 = 1, scenario: Scenar
       charmTicks: sp.charm_ticks ?? 0,
       launch: null,
       fallWaitTicks: 0,
+      successfulLights: sp.successful_lights ?? 0,
     },
     motes: [],
     shades: [],
     drifters: [],
     charms: map.charms.map((pos, i): Charm => ({ id: `C${i + 1}`, pos: [...pos] as Vec3, available: true, respawnTicks: 0 })),
-    lanterns: map.lanterns.map((pos, i) => ({ id: `L${i + 1}`, pos: [...pos] as Vec3, lit: false, deposited: 0 })),
+    lanterns: map.lanterns.map((pos, i) => ({ id: `L${i + 1}`, pos: [...pos] as Vec3, lit: false, deposited: 0, fuel: 0, everLit: false, relitCount: 0 })),
     prevButtons: { jump: false, interact: false, pulse: false, dash: false, pause: false },
   };
   // A scenario-placed player above the surface starts airborne; on (or embedded in) terrain counts as grounded.
@@ -103,6 +104,10 @@ export function createWorld(seed: number, night: 1 | 2 | 3 = 1, scenario: Scenar
     if (l.pos) t.pos = [...l.pos] as Vec3;
     if (l.deposited !== undefined) t.deposited = l.deposited;
     if (l.lit !== undefined) t.lit = l.lit;
+    if (l.ever_lit !== undefined) t.everLit = l.ever_lit;
+    // Ticket-03: lit without fuel -> 100; a lit lantern has (obviously) been lit; unlit lanterns hold no fuel
+    if (t.lit) { t.everLit = true; t.fuel = Math.round((l.fuel ?? TUNING.fuel_max) * C.fuelUnit); if (t.fuel <= 0) { t.lit = false; t.fuel = 0; } }
+    else t.fuel = 0;
   }
 
   if (scenario.motes) {
@@ -119,7 +124,8 @@ export function createWorld(seed: number, night: 1 | 2 | 3 = 1, scenario: Scenar
     for (const s of scenario.shades) {
       let id = s.id;
       if (!id) { while (used.has(`S${w.nextShadeId}`)) w.nextShadeId++; id = `S${w.nextShadeId++}`; used.add(id); }
-      w.shades.push(newShade(id, s.pos, s.state ?? 'wander', s.state_ticks_left ?? defaultStateTicks(s.state)));
+      if (s.target_lantern_id && !w.lanterns.some((l) => l.id === s.target_lantern_id)) throw new ScenarioError(`unknown target_lantern_id: ${s.target_lantern_id}`);
+      w.shades.push(newShade(id, s.pos, s.state ?? 'wander', s.state_ticks_left ?? defaultStateTicks(s.state), s.target_lantern_id ?? null));
     }
     for (const id of used) w.nextShadeId = Math.max(w.nextShadeId, idNum(id) + 1);
   }

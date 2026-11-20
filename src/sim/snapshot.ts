@@ -1,4 +1,4 @@
-import { timeLeftS } from './step';
+import { capacityOf, timeLeftS } from './step';
 import { C } from './tuning';
 import type { Vec3, World } from './types';
 
@@ -20,9 +20,12 @@ export function snapshot(w: World) {
     player: {
       pos: v3(p.pos), vel: v3(p.vel), grounded: p.grounded, invuln: p.invulnTicks > 0,
       dash_cd_s: sec(p.dashCdTicks), pulse_cd_s: sec(p.pulseCdTicks), charm_s: sec(p.charmTicks),
-      flames: p.flames, carried: p.carried,
+      flames: p.flames, carried: p.carried, capacity: capacityOf(w),
     },
-    lanterns: w.lanterns.map((l) => ({ id: l.id, pos: v3(l.pos), lit: l.lit, deposited: l.deposited })),
+    lanterns: w.lanterns.map((l) => ({
+      id: l.id, pos: v3(l.pos), lit: l.lit, deposited: l.deposited,
+      fuel: l.lit ? Math.round((l.fuel / C.fuelUnit) * 10) / 10 : 0, ever_lit: l.everLit, relit_count: l.relitCount,
+    })),
     shades: w.shades.map((s) => ({ id: s.id, pos: v3(s.pos), state: s.state })),
     motes_active: w.motes.length,
     motes: w.motes.map((m) => ({ id: m.id, pos: v3(m.pos), kind: m.kind, ttl_s: m.ttl === null ? null : sec(m.ttl) })),

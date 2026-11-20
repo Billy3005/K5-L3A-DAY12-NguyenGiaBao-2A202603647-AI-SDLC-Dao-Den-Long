@@ -34,7 +34,7 @@ const unit = (from: [number, number], to: [number, number]): [number, number] =>
 };
 
 const night1: NightMap = {
-  night: 1, name: 'Đảo Bến', durationS: 300, start: [0, 0, 0],
+  night: 1, name: 'Đảo Bến', durationS: 240, start: [0, 0, 0],
   lanterns: [[0, 0, 25], [23.8, 0, 7.7], [14.7, 0, -20.2], [-14.7, 0, -20.2], [-23.8, 0, 7.7]],
   motePoints: [...ring(12, 0, every(45)), ...ring(33, 0, every(22.5))],
   shadePoints: ring(37, 0, every(30, 15)),
@@ -44,7 +44,7 @@ const night1: NightMap = {
 };
 
 const night2: NightMap = {
-  night: 2, name: 'Đảo Cau', durationS: 330, start: [0, 0, 0],
+  night: 2, name: 'Đảo Cau', durationS: 270, start: [0, 0, 0],
   lanterns: [[0, 0, 20], [17, 0, -10], [-17, 0, -10], [70, 0, 20], [87, 0, -10], [53, 0, -10]],
   motePoints: [
     ...ring(10, 0, every(90)), ...ring(22, 0, every(45)),
@@ -79,7 +79,7 @@ function night3Top(x: number, z: number): number | null {
 const night3: NightMap = {
   // Contract: player starts at (0,0,0) (Codex decision Q13), although that is inside the bell tower column.
   // The "embedded" rule in step.ts lets the player walk out horizontally.
-  night: 3, name: 'Đảo Chuông', durationS: 360, start: [0, 0, 0],
+  night: 3, name: 'Đảo Chuông', durationS: 300, start: [0, 0, 0],
   lanterns: [[0, 6, 6], [18, 3, 10], [-18, 3, 10], [35, 0, -10], [-35, 0, -10], [20, 0, -35], [-20, 0, -35]],
   motePoints: [...ring(34, 0, every(20)), ...ring(18, 3, every(20, 20, 8)), ...ring(5, 6, every(90, 45))],
   shadePoints: ring(43, 0, every(22.5)),
