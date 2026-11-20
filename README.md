@@ -1,6 +1,6 @@
 # Đảo Đèn Lồng
 
-> **Video demo (2:48, có 47 giây chơi trực tiếp):** [docs/demo/demo.mp4](docs/demo/demo.mp4) (cũng đính kèm ở [Release v1.0.0](../../releases/tag/v1.0.0)) · Bài lab Day 12 AI SDLC, cá nhân: Nguyễn Gia Bảo, 2A202603647 · Đề bài lab: [LAB-README.md](LAB-README.md) · Retro: [docs/retro.md](docs/retro.md)
+> **Video demo (3:13: chơi trực tiếp, tính năng, bằng chứng test/headless/bench/soak, harness AI và git):** [docs/demo/demo.mp4](docs/demo/demo.mp4) (cũng đính kèm ở [Release v1.0.0](../../releases/tag/v1.0.0)) · Bài lab Day 12 AI SDLC, cá nhân: Nguyễn Gia Bảo, 2A202603647 · Đề bài lab: [LAB-README.md](LAB-README.md) · Retro: [docs/retro.md](docs/retro.md)
 
 Game 3D góc nhìn thứ ba. Mây, người giữ đèn nhỏ tuổi đội nón lá, đi qua ba hòn đảo (Đảo Bến, Đảo Cau, Đảo Chuông) gom đom đóm để thắp và giữ dầu cho các Đèn Lồng Lớn tới bình minh. Trên đường đi, Mây phải né và xua Bóng Mực (chúng hút dầu đèn yếu), đồng thời giữ đom đóm khỏi bị Gió Lạc cướp.
 
@@ -111,5 +111,5 @@ Phần sáng tạo chỉ nằm ở lớp render; headless và cảnh bench khôn
 ## Tài liệu dự án
 
 - [SPEC.md](SPEC.md): luật, giả định, tiêu chí nghiệm thu · [CHANGELOG.md](CHANGELOG.md) · [CREDITS.md](CREDITS.md) · [LICENSE](LICENSE)
-- [docs/tickets/](docs/tickets/) (nguyên văn) · [docs/adr/](docs/adr/) · [docs/notes/](docs/notes/) (nhật ký AI, đánh giá từng phase) · [docs/proof/](docs/proof/) (bằng chứng) · [docs/retro.md](docs/retro.md)
+- [docs/tickets/](docs/tickets/) (nguyên văn) · [docs/adr/](docs/adr/) · [docs/notes/](docs/notes/) (nhật ký AI, đánh giá từng phase, [prompt gửi Codex](docs/notes/ai-prompts.md)) · [docs/proof/](docs/proof/) (bằng chứng) · [docs/retro.md](docs/retro.md)
 - Harness AI: [CLAUDE.md](CLAUDE.md), [.claude/settings.json](.claude/settings.json) (Stop hook chặn kết thúc khi test đỏ), [.claude/skills/verify-phase](.claude/skills/verify-phase/SKILL.md), [CI](.github/workflows/ci.yml)

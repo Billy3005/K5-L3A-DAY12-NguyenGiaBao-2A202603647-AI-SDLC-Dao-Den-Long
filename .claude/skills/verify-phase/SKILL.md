@@ -16,6 +16,7 @@ Evidence = real runs of `dist/headless.js`, never hand-written output.
 3. `npm run verify -- N` → builds, runs each scenario twice, checks determinism + expectations, writes `docs/proof/phase-N/summary.md` + inputs/outputs.
 4. If a ticket replaces an old rule: update or delete the old scenario **with a one-line reason** in the phase notes. Old phases' scenarios keep running unless replaced (they are the regression suite: `p1-*` must still pass in `verify -- 2`).
    Performance: contract requires a full night (≤ 21,600 ticks) in ≤ 30 s; `p2-night3-full` + `tests/contract.test.ts` cover it.
-5. Commit the proof together with the code it was generated from, then tag.
+5. Commit the code first, then run `npm run verify -- N --no-build` so `summary.md` records a clean commit (the dirty check ignores `docs/proof`), commit the proof, then tag.
+6. Release-level evidence (Phase 4): `node scripts/bench.mjs` -> `bench.json` (real GPU window, run alone), `npm run soak -- --seed 7 --nights 10 --out soak.json`, `node scripts/demo.mjs` for the video. Headless must stay byte-identical to the previous phase's proof (cmp the out.jsonl files).
 
 Visual-only requirements (HUD, lighting, camera, menus): `npm run build && npm run shots -- N` (Playwright, from the project or `$PW_TOOLS_DIR`, default `~/pw-tools`) → `docs/proof/phase-N/screens/`. Stage special states with `window.ddl.load(night, scenario)` (same `createWorld` as headless). **Open every screenshot and write captions from what is actually visible** — in phase 3 a caption written beforehand was false and exposed a render bug. Headless Chromium FPS (software GL) is not performance evidence.

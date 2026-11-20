@@ -58,3 +58,13 @@ Time is up → tag anyway and record what is unfinished as "chưa đạt". Never
 
 ## 6. Tokens
 Keep context lean: read only the files needed, batch questions to Codex, use short prompts, stop and redirect when going off-track. Log rough token use per phase.
+
+## 7. Lessons (harness updated after repeated AI mistakes)
+
+- Hand-computed timer expectations were off by one tick (P1–P3) → timer convention above + rule in the verify-phase skill; never place a scenario exactly on a comparison threshold (P3).
+- Codex review needs **every** changed file incl. `index.html`/CSS: P4 got 2/5 false findings from a partial diff. Codex can't run a shell on Windows: inline sources, fresh session.
+- Captions for screenshots are written **after** opening the image (P3 render bug was found this way).
+- Files here are CRLF: scripted edits must be CRLF-aware (fail loudly on a miss). No long bash heredocs containing backticks (the `rtk` hook mangles them).
+- Long sim tests (≥ 10k ticks) get an explicit vitest timeout; the default 5 s flakes under load/CI.
+- Measure before "fixing" metrics (P4 soak RSS: probe heap vs RSS, 10 vs 30 nights) and record the evidence next to the decision.
+- Prompts sent to Codex are logged in `docs/notes/ai-prompts.md`; token use per phase in `docs/notes/phase-N.md`.

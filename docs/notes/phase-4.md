@@ -68,7 +68,7 @@ Bài học: bản diff gửi review phải gồm cả `index.html`. 2/5 báo sai
 | §5 README, CHANGELOG 4 phase, CREDITS, LICENSE, Release | Đạt. Release đăng sau khi được duyệt push | README, [CHANGELOG](../../CHANGELOG.md) |
 | §6 Contract v1.3 | Đạt | `contract.test`, [summary.md](../proof/phase-4/summary.md) |
 | §7 Retro | Đạt | [docs/retro.md](../retro.md) |
-| §7 Video demo .mp4 | Đạt: [docs/demo/demo.mp4](../demo/demo.mp4) dài 2:48. **0:00–0:47 là người chơi thật** (quay màn hình Windows, có âm thanh). Phần sau quay bằng Playwright ([scripts/demo.mjs](../../scripts/demo.mjs)) trong cửa sổ Chrome có GPU, phần chơi ở đó là input tự động và có ghi chú trên màn hình. Cuối video là output thật của test, headless, verify, soak và bench. Hai đoạn được ghép bằng ffmpeg | Video |
+| §7 Video demo .mp4 | Đạt: [docs/demo/demo.mp4](../demo/demo.mp4) dài 3:13. **0:00–0:47 là người chơi thật** (quay màn hình Windows, có âm thanh). Phần sau quay bằng Playwright ([scripts/demo.mjs](../../scripts/demo.mjs)) trong cửa sổ Chrome có GPU, phần chơi ở đó là input tự động và có ghi chú trên màn hình. Cuối video là output thật của test, headless, verify, soak và bench. Khoảng 25 s cuối lướt qua harness AI (CLAUDE.md, Stop hook, skill, CI), `git tag`/`git log` và retro. Các đoạn được ghép bằng ffmpeg | Video |
 | Nợ Phase 3: nhấp nháy 1 Hz | Đạt: video ở khoảng 1:14–1:23 (0:27–0:36 của phần tự động): đèn L2 dưới 30 dầu đổi sáng/mờ, kèm phụ đề "Đèn L2 sắp cạn dầu" | Video |
 
 ## Nhật ký lỗi của AI
