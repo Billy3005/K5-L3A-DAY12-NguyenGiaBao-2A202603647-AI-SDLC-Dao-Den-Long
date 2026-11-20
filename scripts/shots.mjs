@@ -3,7 +3,7 @@
 // Playwright is resolved from the project, else from $PW_TOOLS_DIR (default ~/pw-tools: shared local install).
 import { spawn } from 'node:child_process';
 import { createRequire } from 'node:module';
-import { mkdirSync } from 'node:fs';
+import { existsSync, mkdirSync, rmSync } from 'node:fs';
 import { homedir } from 'node:os';
 import { join } from 'node:path';
 
@@ -17,10 +17,13 @@ async function loadPlaywright() {
   return createRequire(join(dir, 'package.json'))('playwright');
 }
 
+// Served by dist/server.js (run_cmd) so the leaderboard API is real; its file is a throwaway copy under the proof dir.
 const PORT = 4199;
-const server = spawn(process.execPath, ['node_modules/vite/bin/vite.js', 'preview', '--port', String(PORT), '--strictPort'], { stdio: 'pipe' });
+const board = join('docs', 'proof', `phase-${phase}`, 'leaderboard.json');
+if (phase === '4' && existsSync(board)) rmSync(board);
+const server = spawn(process.execPath, ['dist/server.js', '--port', String(PORT), '--host', '127.0.0.1'], { stdio: 'pipe', env: { ...process.env, LEADERBOARD_FILE: board } });
 await new Promise((res, rej) => {
-  const t = setTimeout(() => rej(new Error('vite preview did not start')), 20000);
+  const t = setTimeout(() => rej(new Error('server did not start')), 20000);
   server.stdout.on('data', (d) => { if (String(d).includes(String(PORT))) { clearTimeout(t); res(); } });
 });
 
@@ -31,9 +34,11 @@ const shot = async (name, caption) => { await page.screenshot({ path: join(out, 
 const wait = (ms) => page.waitForTimeout(ms);
 const load = (n, sc, yaw = 0) => page.evaluate(([n, sc, yaw]) => window.ddl.load(n, sc, yaw), [n, sc, yaw]);
 
+const Q = { random_motes: false, random_shades: false, random_drifters: false, wind_enabled: false, motes: [], drifters: [], charms: [] };
 try {
   await page.goto(`http://localhost:${PORT}/`);
   await wait(1500);
+  if (phase === '4') { await phase4(); process.exit(0); }
   await shot('01-menu', 'Menu chính');
   await page.getByRole('button', { name: 'Cài đặt' }).click();
   await wait(300);
@@ -41,7 +46,6 @@ try {
   await page.getByRole('button', { name: 'Quay lại' }).click();
 
   // Ticket-03 lantern states in one row in front of the camera; shade draining the weak lantern; 25 s left
-  const Q = { random_motes: false, random_shades: false, random_drifters: false, wind_enabled: false, motes: [], drifters: [], charms: [] };
   const lanternRow = {
     ...Q, time_left_s: 25,
     player: { pos: [0, 0, 13], carried: 7, successful_lights: 2 },
@@ -81,4 +85,52 @@ try {
 } finally {
   await browser.close();
   server.kill();
+}
+
+// Ticket-04: accessibility, captions, leaderboard (real server API + on-disk file)
+async function phase4() {
+  const click = (name) => page.getByRole('button', { name, exact: true }).click();
+  await page.evaluate(() => window.ddl.set({ bigText: false, reducedMotion: false, colorblind: false }));
+  await click('Cài đặt'); await wait(300);
+  await shot('01-settings-a11y', 'Cài đặt: thêm "Giảm chuyển động", "Chữ lớn (×1.25)", nút "Đổi phím"');
+  await click('Đổi phím'); await wait(200);
+  await page.locator('button[data-act="jump"]').click(); await page.keyboard.press('KeyF'); await wait(200);
+  await shot('02-keys-duplicate', 'Gán Nhảy = F (đang là Tỏa sáng) → bị từ chối và báo trùng');
+  await page.locator('button[data-act="jump"]').click(); await page.keyboard.press('KeyJ'); await wait(200);
+  await shot('03-keys-rebound', 'Gán Nhảy = J thành công; bảng phím hiện J');
+  await click('Khôi phục mặc định'); await wait(200);
+  await shot('04-keys-reset', 'Khôi phục mặc định: Nhảy = Space');
+  await click('Quay lại'); await click('Quay lại'); await wait(200);
+  // captions at ~5 s: first shades spawn (tick 300), L1 crosses below 30 fuel, 10 s left
+  await load(1, { ...Q, random_shades: true, time_left_s: 15, lanterns: [{ id: 'L1', lit: true, fuel: 35 }] }, 180);
+  await page.evaluate(() => window.ddl.step(301)); await wait(300);
+  await shot('05-captions-shade-arrow', 'Phụ đề: Bóng Mực xuất hiện (+ mũi tên tím ở mép màn hình), đèn L1 < 30, 10 giây cuối');
+  await load(3, { ...Q, wind_enabled: true, player: { pos: [0, 0, -30] } }, 0);
+  await page.evaluate(() => window.ddl.step(1680)); await wait(200);
+  await shot('06-caption-wind', 'Đêm 3: phụ đề "Gió sắp thổi" 2 s trước cơn gió');
+  await page.evaluate(() => window.ddl.set({ bigText: true }));
+  await load(1, { ...Q, lanterns: [{ id: 'L1', lit: true, fuel: 80 }] }, 0); await wait(400);
+  await shot('07-big-text', 'Chữ lớn ×1.25 (gốc 18 px → 22.5 px)');
+  await page.evaluate(() => window.ddl.set({ bigText: false }));
+  const hit = { ...Q, player: { flames: 3 }, shades: [{ id: 'S1', pos: [0, 1, 0.5] }] };
+  await load(1, hit, 0); await wait(90);
+  await shot('08-hit-flash', 'Bị Bóng Mực chạm: chớp đỏ + rung camera (giảm chuyển động TẮT)');
+  await page.evaluate(() => window.ddl.set({ reducedMotion: true }));
+  await load(1, hit, 0); await wait(90);
+  await shot('09-hit-reduced-motion', 'Cùng tình huống, giảm chuyển động BẬT: không chớp, không rung');
+  await page.evaluate(() => window.ddl.set({ reducedMotion: false }));
+  // lose -> name form -> save (server API) -> leaderboard
+  await load(1, { ...Q, player: { flames: 1 }, shades: [{ id: 'S1', pos: [0, 1, 0.5] }] }, 0); await wait(600);
+  await page.locator('#lbName').fill('ab'); await page.locator('#lbSave').click(); await wait(200);
+  await shot('10-name-invalid', 'Thua Đêm 1 → form nhập tên; "ab" (2 ký tự) bị từ chối');
+  await page.locator('#lbName').fill('Nguyễn_Bảo'); await page.locator('#lbSave').click(); await wait(600);
+  await shot('11-leaderboard-saved', 'Lưu "Nguyễn_Bảo" (tiếng Việt có dấu) → Bảng xếp hạng, dòng mới tô vàng');
+  for (const [name, score] of [['Bao_01', 450], ['Mây', 450], ['Zed', 1200]]) {
+    await page.evaluate(([name, score]) => fetch('api/leaderboard', { method: 'POST', body: JSON.stringify({ name, score, nights_won: 2, achieved_at: new Date().toISOString().replace('Z', '+00:00'), seed: 1 }) }), [name, score]);
+    await wait(50);
+  }
+  await page.reload(); await wait(1200);
+  await click('Bảng xếp hạng'); await wait(500);
+  await shot('12-leaderboard-menu', 'Menu → Bảng xếp hạng (đọc lại từ đĩa sau khi tải lại trang): điểm giảm dần, bằng điểm ai trước đứng trên');
+  await browser.close(); server.kill();
 }

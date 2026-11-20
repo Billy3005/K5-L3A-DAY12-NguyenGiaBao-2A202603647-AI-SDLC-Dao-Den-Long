@@ -5,49 +5,72 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Đảo Đèn Lồng</title>
   <style>
+    /* Ticket-04 §4: every UI text ≥ 18px (1rem) at 1280×720; "Chữ lớn" scales the root ×1.25 */
+    html { font-size: 18px; }
+    html.big { font-size: 22.5px; }
     :root { --text: #F5F1E6; --danger: #FF5A5F; --gold: #F2C14E; --night: #0E1430; --scarf: #C8102E; }
     html, body { margin: 0; height: 100%; overflow: hidden; background: var(--night); font-family: system-ui, sans-serif; color: var(--text); }
-    .hud { position: fixed; pointer-events: none; text-shadow: 0 1px 3px #000; font-size: 18px; }
-    #hFlames { top: 14px; left: 16px; font-size: 26px; letter-spacing: 4px; }
-    #hTimer { top: 12px; left: 50%; transform: translateX(-50%); font-size: 30px; font-variant-numeric: tabular-nums; }
+    .hud { position: fixed; pointer-events: none; text-shadow: 0 1px 3px #000; font-size: 1rem; }
+    .hud small { font-size: 1rem; opacity: .85; }
+    #hFlames { top: 14px; left: 16px; font-size: 1.45rem; letter-spacing: 4px; }
+    #hTimer { top: 12px; left: 50%; transform: translateX(-50%); font-size: 1.67rem; font-variant-numeric: tabular-nums; }
     #hTimer.danger { color: var(--danger); animation: blink 1s steps(2) infinite; }
     body.cb { --danger: #FFFFFF; }
-    #hMotes span { margin-left: 8px; font-size: 16px; }
+    body.rm #hTimer.danger { animation: none; }
+    #hMotes span { margin-left: 8px; font-size: 1rem; }
     @keyframes blink { 50% { opacity: .35; } }
     #hRight { top: 14px; right: 16px; text-align: right; line-height: 1.5; }
     #hRight .score { color: var(--gold); font-weight: 700; }
-    #hMotes { bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+    #hMotes { bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; align-items: center; }
     #hMotes i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #FFE58A88; display: block; }
     #hMotes i.on { background: #FFF6C2; box-shadow: 0 0 10px #FFE58A; border-color: #FFE58A; }
     #hCds { bottom: 16px; right: 16px; display: flex; gap: 10px; }
-    .cd { width: 54px; height: 54px; border-radius: 12px; background: #1B2350cc; border: 2px solid var(--gold); position: relative; overflow: hidden; display: grid; place-items: center; font-size: 12px; }
+    .cd { width: 4rem; height: 4rem; border-radius: 12px; background: #1B2350cc; border: 2px solid var(--gold); position: relative; overflow: hidden; display: grid; place-items: center; font-size: 1rem; }
     .cd b { position: absolute; left: 0; right: 0; bottom: 0; background: #00000099; }
-    #hPrompt { bottom: 70px; left: 50%; transform: translateX(-50%); background: #1B2350cc; padding: 6px 14px; border-radius: 8px; display: none; }
-    #hArrow { width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-bottom: 30px solid #FFB347; display: none; filter: drop-shadow(0 0 6px #FFB347); }
-    #hInfo { bottom: 16px; left: 16px; font-size: 12px; opacity: .7; }
-    #hWind { top: 56px; left: 50%; transform: translateX(-50%); color: #8FA3B8; display: none; }
-    #screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #0E1430dd; z-index: 5; }
+    #hPrompt { bottom: 80px; left: 50%; transform: translateX(-50%); background: #1B2350cc; padding: 6px 14px; border-radius: 8px; display: none; }
+    #hArrow, #hShade { width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-bottom: 30px solid #FFB347; display: none; filter: drop-shadow(0 0 6px #FFB347); }
+    #hShade { border-bottom-color: #7A3CFF; filter: drop-shadow(0 0 6px #7A3CFF); }
+    body.cb #hShade { border-bottom-color: #00B3FF; filter: drop-shadow(0 0 6px #00B3FF); }
+    #hInfo { bottom: 16px; left: 16px; font-size: 1rem; opacity: .7; }
+    #hCap { top: 64px; left: 50%; transform: translateX(-50%); text-align: center; }
+    #hCap div { background: #0E1430cc; border: 1px solid #F2C14E66; padding: 4px 14px; border-radius: 8px; margin-bottom: 6px; }
+    #hFlash { inset: 0; background: #C8102E; opacity: 0; }
+    #hFlash.on { animation: flash .35s ease-out; }
+    @keyframes flash { from { opacity: .35; } to { opacity: 0; } }
+    body.rm #hFlash { display: none; }
+    #screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #0E1430dd; z-index: 5; overflow: auto; }
     #screen.hidden { display: none; }
-    .panel { text-align: center; max-width: 560px; padding: 28px; }
-    .panel h1 { color: #FFB347; font-size: 44px; margin: 0 0 8px; }
-    .panel h2 { color: var(--gold); margin: 0 0 12px; }
+    .panel { text-align: center; max-width: 640px; padding: 28px; font-size: 1rem; }
+    .panel h1 { color: #FFB347; font-size: 2.45rem; margin: 0 0 8px; }
+    .panel h2 { color: var(--gold); margin: 0 0 12px; font-size: 1.5rem; }
     .panel p { line-height: 1.6; }
     .panel .quote { font-style: italic; opacity: .9; }
-    .panel button { display: block; margin: 10px auto; min-width: 220px; padding: 10px 18px; font-size: 17px; border-radius: 10px; border: 2px solid var(--gold); background: #1B2350; color: var(--text); cursor: pointer; }
-    .panel button:hover { background: #2a356e; }
+    .panel button { display: block; margin: 10px auto; min-width: 220px; padding: 10px 18px; font-size: 1rem; border-radius: 10px; border: 2px solid var(--gold); background: #1B2350; color: var(--text); cursor: pointer; }
+    .panel button:hover, .panel button:focus-visible { background: #2a356e; }
     .panel label { display: block; margin: 14px 0; }
     .panel input[type=range] { width: 260px; vertical-align: middle; }
+    .panel input[type=checkbox] { width: 1.1rem; height: 1.1rem; vertical-align: middle; }
+    .panel table { margin: 0 auto 8px; border-collapse: collapse; }
+    .panel td, .panel th { padding: 4px 12px; text-align: left; }
+    .panel .keys button { margin: 2px 0; min-width: 160px; padding: 4px 10px; }
+    .panel .keys button.dup { border-color: var(--danger); color: var(--danger); }
+    .panel .board tr.me { color: var(--gold); font-weight: 700; }
+    .panel .msg { min-height: 1.6em; color: var(--gold); }
+    .panel .save input { font-size: 1rem; padding: 8px; border-radius: 8px; border: 2px solid var(--gold); background: #0E1430; color: var(--text); width: 220px; }
+    .panel .save button { display: inline-block; min-width: 0; margin: 0 0 0 6px; }
   </style>
 </head>
 <body>
+  <div id="hFlash" class="hud"></div>
   <div id="hFlames" class="hud"></div>
   <div id="hTimer" class="hud"></div>
   <div id="hRight" class="hud"></div>
-  <div id="hWind" class="hud">🍃 Gió sắp nổi…</div>
+  <div id="hCap" class="hud" aria-live="polite"></div>
   <div id="hMotes" class="hud"></div>
   <div id="hCds" class="hud"><div class="cd" id="cdDash">Lướt<b></b></div><div class="cd" id="cdPulse">Tỏa<b></b></div></div>
   <div id="hPrompt" class="hud"></div>
   <div id="hArrow" class="hud"></div>
+  <div id="hShade" class="hud"></div>
   <div id="hInfo" class="hud"></div>
   <div id="screen"></div>
   <script type="module" src="/src/render/main.ts"></script>
