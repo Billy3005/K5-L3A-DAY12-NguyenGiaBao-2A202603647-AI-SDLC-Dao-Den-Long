@@ -1,6 +1,6 @@
 # Đảo Đèn Lồng
 
-> **Video demo:** đính kèm ở [Release v1.0.0](../../releases/tag/v1.0.0) (`demo.mp4`) · Bài lab Day 12 AI SDLC, cá nhân: Nguyễn Gia Bảo, 2A202603647 · Đề bài lab: [LAB-README.md](LAB-README.md) · Retro: [docs/retro.md](docs/retro.md)
+> **Video demo (2:01):** [docs/demo/demo.mp4](docs/demo/demo.mp4) (cũng đính kèm ở [Release v1.0.0](../../releases/tag/v1.0.0)) · Bài lab Day 12 AI SDLC, cá nhân: Nguyễn Gia Bảo, 2A202603647 · Đề bài lab: [LAB-README.md](LAB-README.md) · Retro: [docs/retro.md](docs/retro.md)
 
 Game 3D góc nhìn thứ ba. Mây, người giữ đèn nhỏ tuổi đội nón lá, đi qua ba hòn đảo (Đảo Bến, Đảo Cau, Đảo Chuông) gom đom đóm để thắp và giữ dầu cho các Đèn Lồng Lớn tới bình minh. Trên đường đi, Mây phải né và xua Bóng Mực (chúng hút dầu đèn yếu), đồng thời giữ đom đóm khỏi bị Gió Lạc cướp.
 
@@ -65,6 +65,7 @@ Tổng điểm là tổng điểm các Đêm đã thắng. Luật chi tiết và
 npm test                 # vitest: luật, contract, tất định, bench scene, soak, bảng xếp hạng
 npm run verify -- 4      # build + chạy mọi scenario (Phase 1–3) qua CLI thật, 2 lần, ghi docs/proof/phase-4/
 npm run shots -- 4       # ảnh bằng chứng giao diện (Playwright) -> docs/proof/phase-4/screens/
+node scripts/demo.mjs <dir-chứa-output-lệnh> demo.webm   # quay video demo (Playwright, cửa sổ Chrome thật)
 ```
 
 ## Chế độ headless (Test Contract v1.3)
