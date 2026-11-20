@@ -58,6 +58,8 @@ export interface World {
   randomShades: boolean;
   randomDrifters: boolean;
   windEnabled: boolean;
+  /** Ticket-04 bench scene only (never set by headless): no fuel loss, pickups, contact or night end. */
+  bench: boolean;
   wind: { ticks: number; dirDeg: number | null };
   nextMoteId: number;
   nextShadeId: number;

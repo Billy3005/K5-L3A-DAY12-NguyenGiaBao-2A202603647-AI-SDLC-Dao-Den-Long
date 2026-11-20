@@ -66,6 +66,7 @@ export function createWorld(seed: number, night: 1 | 2 | 3 = 1, scenario: Scenar
     randomShades: scenario.random_shades ?? true,
     randomDrifters: scenario.random_drifters ?? true,
     windEnabled: scenario.wind_enabled ?? true,
+    bench: false,
     wind: { ticks: 0, dirDeg: null },
     nextMoteId: 1,
     nextShadeId: 1,

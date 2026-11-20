@@ -9,11 +9,18 @@ import { TUNING } from '../src/sim/tuning';
 const dir = mkdtempSync(join(tmpdir(), 'ddl-'));
 const tmp = (name: string, body: unknown) => { const p = join(dir, name); writeFileSync(p, typeof body === 'string' ? body : JSON.stringify(body)); return p; };
 
-describe('game.contract.json v1.2', () => {
+describe('game.contract.json v1.3', () => {
   it('tuning matches the numbers the game uses', () => {
     const c = JSON.parse(readFileSync('game.contract.json', 'utf8'));
-    expect(c.contract_version).toBe('1.2');
+    expect(c.contract_version).toBe('1.3');
     expect(c.tuning).toEqual(TUNING);
+  });
+  it('Ticket-04 §6: bench_cmd + soak_cmd present, run_cmd exports the leaderboard', () => {
+    const c = JSON.parse(readFileSync('game.contract.json', 'utf8'));
+    expect(c.bench_cmd).toBe('node scripts/bench.mjs');
+    expect(c.soak_cmd).toBe('node --expose-gc --no-opt dist/soak.js');
+    expect(c.run_cmd).toBe('node dist/server.js');
+    expect(c.headless_cmd).toBe('node dist/headless.js');
   });
 });
 

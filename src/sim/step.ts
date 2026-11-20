@@ -121,12 +121,12 @@ export function step(w: World, input: InputState): GameEvent[] {
   w.motes = w.motes.filter((m) => m.ttl === null || --m.ttl > 0);
   for (const c of w.charms) if (!c.available && c.respawnTicks > 0 && --c.respawnTicks === 0) c.available = true;
   // Ticket-03: fuel decay (1/s) + drain (5/s per draining shade), integer 1/60 units
-  for (const l of w.lanterns) if (l.lit) l.fuel -= C.decayPerTickU;
+  for (const l of w.lanterns) if (l.lit && !w.bench) l.fuel -= C.decayPerTickU;
   const drainEvents: [Lantern, Shade][] = [];
   for (const s of byId(w.shades)) {
     if (s.state !== 'drain') continue;
     const l = w.lanterns.find((x) => x.id === s.target);
-    if (!l || !l.lit) continue;
+    if (!l || !l.lit || w.bench) continue;
     l.fuel -= C.drainPerTickU;
     if (++s.drainTicks % C.fuelDrainEventEvery === 0) drainEvents.push([l, s]);
   }
@@ -157,7 +157,7 @@ export function step(w: World, input: InputState): GameEvent[] {
   if (w.wind.ticks > 0 && --w.wind.ticks === 0) w.wind.dirDeg = null;
 
   // 4. pickups (motes, charms)
-  if (targetable(w) && p.flames > 0) {
+  if (targetable(w) && p.flames > 0 && !w.bench) {
     for (let i = 0; i < w.motes.length && p.carried < capacityOf(w);) {
       const m = w.motes[i];
       if (distXZ(p.pos, m.pos) <= T.pickup_radius && Math.abs(p.pos[1] - m.pos[1]) <= C.pickupHeight) {
@@ -270,7 +270,7 @@ export function step(w: World, input: InputState): GameEvent[] {
       clampOutsideSafe(s, w.lanterns);
     } else if (s.state === 'wander' || s.state === 'chase') {
       const d = distXZ(s.pos, p.pos);
-      if (s.state === 'wander' && targetable(w) && d <= C.detectM) s.state = 'chase';
+      if (s.state === 'wander' && targetable(w) && d <= C.detectM && !w.bench) s.state = 'chase'; // Ticket-04 bench: shades stay in wander
       else if (s.state === 'chase' && (!targetable(w) || d > C.giveUpM)) s.state = 'wander';
       if (s.state === 'chase' && d > 1e-9) {
         const stepLen = Math.min(speed, d);
@@ -299,7 +299,7 @@ export function step(w: World, input: InputState): GameEvent[] {
   for (const d of w.drifters) moveDrifter(w, d);
 
   // 9. contact: drifters steal first, then shades hit (ascending id)
-  if (targetable(w) && p.flames > 0) {
+  if (targetable(w) && p.flames > 0 && !w.bench) {
     for (const d of byId(w.drifters)) {
       if (d.state !== 'chase' || distXZ(d.pos, p.pos) > C.drifterTouchM) continue;
       const amount = Math.min(C.drifterStealMax, p.carried);
@@ -355,6 +355,7 @@ export function step(w: World, input: InputState): GameEvent[] {
 
   // 11. win / lose
   endTick();
+  if (w.bench) return events; // Ticket-04 bench: the night never ends
   // Ticket-03: no early win; at dawn win if alive and lit lanterns ≥ ceil(0.6 × N)
   if (p.flames <= 0) {
     w.state = 'lost';

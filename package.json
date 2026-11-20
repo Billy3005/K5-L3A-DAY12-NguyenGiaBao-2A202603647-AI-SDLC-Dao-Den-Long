@@ -1,6 +1,6 @@
 {
   "name": "dao-den-long",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "private": true,
   "type": "module",
   "description": "Đảo Đèn Lồng — Day 12 AI SDLC lab game",
@@ -9,12 +9,15 @@
   },
   "scripts": {
     "dev": "vite",
-    "build": "vite build && esbuild src/headless.ts --bundle --platform=node --format=esm --target=node18 --outfile=dist/headless.js",
+    "build": "vite build && esbuild src/headless.ts src/soak.ts src/server.ts --bundle --platform=node --format=esm --target=node18 --outdir=dist",
     "preview": "vite preview",
     "test": "vitest run",
     "typecheck": "tsc --noEmit",
     "verify": "node scripts/verify.mjs",
-    "shots": "node scripts/shots.mjs"
+    "shots": "node scripts/shots.mjs",
+    "start": "node dist/server.js",
+    "bench": "node scripts/bench.mjs",
+    "soak": "node --expose-gc --no-opt dist/soak.js"
   },
   "dependencies": {
     "three": "^0.187.0",
@@ -24,6 +27,7 @@
     "@types/node": "^26.6.6",
     "@types/three": "^0.187.0",
     "esbuild": "^0.28.2",
+    "playwright": "^1.61.1",
     "typescript": "^7.0.2",
     "vite": "^8.3.8",
     "vitest": "^5.1.1"
