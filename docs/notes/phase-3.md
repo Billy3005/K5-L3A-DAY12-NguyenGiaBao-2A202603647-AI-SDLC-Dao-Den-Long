@@ -34,9 +34,12 @@ Mọi scenario và test Phase 1–2 còn lại vẫn đạt mà không phải s�
 | §3 Luật thắng lúc bình minh | Đạt | `fuel.test` (dawn), `p3-dawn-win`, `p3-dawn-lose` |
 | §4 Sức chứa tăng dần | Đạt | `fuel.test` (capacity), `p3-capacity` |
 | §5 Điểm mới | Đạt | Kiểm tra điểm trong các test và scenario trên |
-| §6 Chế độ mù màu, §1 hiển thị thanh dầu | Đã làm, **chưa có ảnh** | Ảnh chụp bằng Playwright sẽ bổ sung |
+| §6 Chế độ mù màu, §1 thanh dầu, đèn tắt bị xẹp | Đạt (ảnh bổ sung sau khi gắn tag) | [screens/README.md](../proof/phase-3/screens/README.md), ảnh 02, 03, 05 |
+| §1 Nhấp nháy 1 Hz khi dầu < 30 | Đã làm, **chưa chứng minh bằng ảnh** | Cả hai ảnh 03 và 04 đều rơi vào pha "tắt"; cần quay clip |
 | §7 Contract v1.2 | Đạt | `contract.test`, [docs/proof/phase-3/summary.md](../proof/phase-3/summary.md) |
-| Nợ Phase 2: bảng màu Bóng Mực và áo Mây | Đã sửa, **chưa có ảnh** | `src/render/main.ts` |
+| Nợ Phase 2: bảng màu Bóng Mực và áo Mây | **Đã sửa** (đóng mục "chưa đạt" của Phase 2) | Ảnh 03–05 |
+
+Lỗi tìm thấy khi chụp: bản render vẽ cột đèn theo vị trí mặc định của bản đồ, không theo `w.lanterns[].pos`. Lỗi chỉ lộ ra khi scenario dời đèn, nên ảnh 03 bản đầu không khớp chú thích. Đã sửa để render đi theo sim, rồi chụp lại.
 
 ## Nhật ký lỗi của AI
 

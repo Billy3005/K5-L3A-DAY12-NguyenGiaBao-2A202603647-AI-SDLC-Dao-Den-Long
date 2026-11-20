@@ -11,6 +11,7 @@ npm run dev                    # play locally (Vite)
 npm test                       # vitest: unit + scenario + determinism + contract-sync
 npm run verify -- N            # build + run ALL tests/scenarios (old phases = regression) via dist/headless.js, twice, diff -> docs/proof/phase-N/
 node dist/headless.js --seed 1 --night 3 --ticks 600 --out out.jsonl
+npm run shots -- N             # Playwright screenshots of the built game -> docs/proof/phase-N/screens/ (verify captions by eye)
 ```
 
 ## Where things live

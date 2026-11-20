@@ -32,7 +32,7 @@ let scene = new THREE.Scene();
 let ambient: THREE.HemisphereLight;
 const mat = (color: number, extra: THREE.MeshStandardMaterialParameters = {}) => new THREE.MeshStandardMaterial({ color, roughness: 0.9, ...extra });
 
-interface LanternView { glass: THREE.Mesh; light: THREE.PointLight; bar: THREE.Mesh; barBg: THREE.Mesh; tear: THREE.Mesh }
+interface LanternView { group: THREE.Group; glass: THREE.Mesh; light: THREE.PointLight; bar: THREE.Mesh; barBg: THREE.Mesh; tear: THREE.Mesh }
 let lanternViews: LanternView[] = [];
 let player: THREE.Group, playerLight: THREE.PointLight, pulseRing: THREE.Mesh;
 const pools = { motes: new Map<string, THREE.Mesh>(), shades: new Map<string, THREE.Mesh>(), drifters: new Map<string, THREE.Mesh>(), charms: new Map<string, THREE.Mesh>() };
@@ -92,7 +92,7 @@ function buildScene(night: 1 | 2 | 3) {
     const bar = new THREE.Mesh(new THREE.PlaneGeometry(1.6, 0.14), new THREE.MeshBasicMaterial({ color: P.lit, side: THREE.DoubleSide })); bar.position.y = 4.4; g.add(bar);
     const tear = new THREE.Mesh(new THREE.BoxGeometry(0.5, 0.12, 0.7), new THREE.MeshBasicMaterial({ color: 0x0e1430 })); tear.position.set(0.2, 3.35, 0); tear.rotation.z = 0.6; g.add(tear);
     g.position.set(pos[0], pos[1], pos[2]); scene.add(g);
-    return { glass, light, bar, barBg, tear };
+    return { group: g, glass, light, bar, barBg, tear };
   });
   // Mây: áo, khăn đỏ, nón lá, đèn nhỏ
   player = new THREE.Group();
@@ -303,6 +303,7 @@ function sync(dt: number) {
   const blinkOff = Math.floor(now / 500) % 2 === 1; // 1 Hz slow blink
   w.lanterns.forEach((l, i) => {
     const v = lanternViews[i]; if (!v) return;
+    v.group.position.set(l.pos[0], l.pos[1], l.pos[2]); // follow the sim (scenarios may move lanterns)
     const m = v.glass.material as THREE.MeshStandardMaterial;
     const fuel = l.fuel / C.fuelUnit, low = l.lit && fuel < TUNING.low_fuel_threshold;
     const cost = l.everLit ? C.relightCost : C.firstLightCost;
@@ -353,5 +354,13 @@ buildScene(1);
 w = createWorld(1, 1);
 goMenu();
 requestAnimationFrame(frame);
-// expose for manual FPS evidence in the console
-(window as unknown as { ddl: unknown }).ddl = { fps: () => fps };
+// Evidence hooks (render-only; used by scripts/shots.mjs and the console). load() builds the world
+// from a contract scenario with the same createWorld() as headless, so screenshots show real sim states.
+(window as unknown as { ddl: unknown }).ddl = {
+  fps: () => fps,
+  load(n: 1 | 2 | 3, scenario: Parameters<typeof createWorld>[2] = {}, yawDeg = 0) {
+    night = n; wonScores = []; buildScene(n); w = createWorld(1, n, scenario);
+    camYaw = yawDeg; mode = 'play'; hideScreen();
+  },
+  setColorblind(on: boolean) { settings.colorblind = on; saveSettings(); },
+};

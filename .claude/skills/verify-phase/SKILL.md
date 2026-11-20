@@ -18,4 +18,4 @@ Evidence = real runs of `dist/headless.js`, never hand-written output.
    Performance: contract requires a full night (≤ 21,600 ticks) in ≤ 30 s; `p2-night3-full` + `tests/contract.test.ts` cover it.
 5. Commit the proof together with the code it was generated from, then tag.
 
-Visual-only requirements (HUD, lighting, camera): screenshot/GIF from `npm run dev` into `docs/proof/phase-N/`, captioned with the requirement it shows.
+Visual-only requirements (HUD, lighting, camera, menus): `npm run build && npm run shots -- N` (Playwright, from the project or `$PW_TOOLS_DIR`, default `~/pw-tools`) → `docs/proof/phase-N/screens/`. Stage special states with `window.ddl.load(night, scenario)` (same `createWorld` as headless). **Open every screenshot and write captions from what is actually visible** — in phase 3 a caption written beforehand was false and exposed a render bug. Headless Chromium FPS (software GL) is not performance evidence.
