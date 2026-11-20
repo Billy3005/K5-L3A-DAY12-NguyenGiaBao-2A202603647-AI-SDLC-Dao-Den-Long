@@ -65,7 +65,7 @@ for (const file of readdirSync('tests/scenarios').filter((f) => f.endsWith('.jso
 }
 
 const commit = execSync('git rev-parse --short HEAD').toString().trim();
-const dirty = execSync('git status --porcelain').toString().trim() ? ' (working tree có thay đổi chưa commit)' : '';
+const dirty = execSync('git status --porcelain -- . ":!docs/proof"').toString().trim() ? ' (working tree có thay đổi chưa commit)' : '';
 writeFileSync(join(outDir, 'summary.md'), `# Bằng chứng headless: Phase ${phase}
 
 Sinh tự động bởi \`npm run verify -- ${phase}\` (không sửa tay). Mỗi scenario chạy qua CLI thật \`node dist/headless.js\` **hai lần**; hai output phải giống hệt nhau (tất định), sau đó đối chiếu sự kiện kỳ vọng (theo thứ tự) và dòng \`end\`.
