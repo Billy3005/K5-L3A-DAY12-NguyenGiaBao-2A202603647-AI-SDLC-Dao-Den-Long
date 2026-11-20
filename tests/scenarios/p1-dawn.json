@@ -1,0 +1,8 @@
+{
+  "requirement": "Giả định A7: hết thời lượng Đêm (bình minh) mà chưa thắp hết đèn thì thua",
+  "seed": 3, "ticks": 1000,
+  "scenario": {"random_motes": false, "random_shades": false, "motes": [], "shades": [], "time_left_s": 2},
+  "expect_exit": 0,
+  "expect_events": [{"name":"game_over","tick":120,"data":{"result":"lost","reason":"dawn"}}],
+  "expect_end": {"ticks":120,"state":"lost","score":0}
+}

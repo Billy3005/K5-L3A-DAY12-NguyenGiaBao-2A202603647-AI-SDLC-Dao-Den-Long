@@ -1,0 +1,11 @@
+{
+  "requirement": "PRD-0: bị Bóng Mực chạm mất máu; hết máu thì thua",
+  "seed": 1, "ticks": 300,
+  "scenario": {"random_motes": false, "random_shades": false, "motes": [], "player": {"flames": 1, "carried": 4}, "shades": [{"id":"S1","pos":[3,0,0]}]},
+  "expect_exit": 0,
+  "expect_events": [
+    {"name":"player_hit","data":{"by":"shade","flames":0,"dropped":2}},
+    {"name":"game_over","data":{"result":"lost","reason":"no_flames"}}
+  ],
+  "expect_end": {"state":"lost"}
+}

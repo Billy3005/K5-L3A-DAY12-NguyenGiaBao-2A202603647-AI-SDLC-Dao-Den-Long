@@ -1,0 +1,19 @@
+name: ci
+on: [push, pull_request]
+jobs:
+  test:
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      # exactly the contract build_cmd
+      - run: npm ci && npm run build
+      - run: npm run typecheck
+      - run: npm test
+      # real CLI, every scenario twice (determinism) + expectations
+      - run: npm run verify -- 1 --no-build
