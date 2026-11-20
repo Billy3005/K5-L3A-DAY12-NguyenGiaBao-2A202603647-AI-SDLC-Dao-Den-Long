@@ -16,4 +16,7 @@ jobs:
       - run: npm run typecheck
       - run: npm test
       # real CLI, every scenario twice (determinism) + expectations
-      - run: npm run verify -- 3 --no-build
+      - run: npm run verify -- 4 --no-build
+      # soak_cmd + run_cmd export (Ticket-04); bench needs a real GPU window so it is run locally (bench.json)
+      - run: node --expose-gc --no-opt dist/soak.js --seed 7 --nights 10 --out soak-ci.json && node -e "const r=require('./soak-ci.json');if(r.crashes||r.mem_end_mb>1.2*r.mem_start_mb)process.exit(1)"
+      - run: node dist/server.js --export-leaderboard lb.json && node -e "require('./lb.json').entries"

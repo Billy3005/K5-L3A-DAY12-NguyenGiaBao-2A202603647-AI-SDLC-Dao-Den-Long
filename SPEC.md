@@ -7,6 +7,7 @@ Spec sống: cập nhật **trước** code mỗi khi ticket đổi. Số liệu
 | 1 | PRD-0 | v1.0 |
 | 2 | [Ticket-02 "Ba hòn đảo"](docs/tickets/ticket-02.md): **thay mọi số liệu tự chọn ở Phase 1** bằng số chuẩn, thêm 3 Đêm và tính năng mới | v1.1 |
 | 3 | [Ticket-03 "Đèn cạn dầu"](docs/tickets/ticket-03.md) (Change Request): đèn có dầu và có thể tắt; thắng lúc bình minh khi số đèn sáng ≥ 60%; điểm mới; sức chứa tăng dần; chế độ mù màu. **Ghi đè** các luật thắng, điểm, vùng an toàn và `wander` của Ticket-02. Quyết định: [ADR 0001](docs/adr/0001-lantern-fuel-and-dawn-win.md). Thay đổi phá vỡ tương thích: [CHANGELOG](CHANGELOG.md). Giả định R1–R13 và tiêu chí nghiệm thu: [docs/notes/phase-3.md](docs/notes/phase-3.md) | v1.2 |
+| 4 | [Ticket-04 "Bình minh: phát hành v1.0.0"](docs/tickets/ticket-04.md) (Non-functional + Release): bench, soak, bảng xếp hạng, dễ tiếp cận, đóng gói. **Không đổi luật hay số liệu**; đầu ra headless giữ nguyên. `run_cmd` đổi thành `node dist/server.js`. Quyết định D1–D15: [ADR 0002](docs/adr/0002-release-bench-soak-leaderboard.md). Tiêu chí nghiệm thu AC4.*: mục cuối file này | v1.3 |
 
 > Khi Ticket-03 mâu thuẫn với các mục B* hoặc AC2.* bên dưới, **Ticket-03 thắng**. Cụ thể: B5 (`wander` đứng yên) đã bị thay, AC2.* về điểm và thắng `all_lit` không còn hiệu lực.
 
@@ -60,3 +61,19 @@ Số liệu, bản đồ và thứ tự 12 bước trong một tick lấy **nguy
 ## Lịch sử: Phase 1 (PRD-0, contract v1.0)
 
 Các giả định A1–A13 của Phase 1 nằm ở tag `phase-1`. Ticket-02 thay toàn bộ số liệu và phần lớn luật tự chọn (đảo, đèn, sức chứa, chi phí, choáng, điểm, rơi). Những gì còn giữ: thứ tự `interact` chỉ xét đèn chưa sáng; đầu vào hỏng → mã thoát 2; tọa độ làm tròn 3 chữ số.
+
+## Tiêu chí nghiệm thu Phase 4 (Ticket-04, Contract v1.3)
+
+| # | Làm A | Thấy B | Bằng chứng |
+|---|---|---|---|
+| AC4.1 | `node scripts/bench.mjs --seed 42 --duration 30 --out bench.json` | Thoát mã 0. File có đủ 10 trường của ticket. Cảnh đo gồm 200 Bóng Mực `wander` và 100 đom đóm | `bench.json`, `release.test` (bench scene, frame stats) |
+| AC4.2 | Chạy sim bench 300 s | Không có `shade_spawned`, `mote_picked`, `player_hit`, `fuel_drain`, `lantern_out`, `game_over`. L1–L3 giữ 100 dầu. Cả 200 Bóng Mực vẫn `wander` và có di chuyển | `release.test` |
+| AC4.3 | Camera bench | Xuất phát ở (30,15,0); tới 3,75 s ở (0,15,−30), quay ngược chiều kim đồng hồ khi nhìn từ trên; mỗi vòng 15 s | `release.test` |
+| AC4.4 | `node --expose-gc --no-opt dist/soak.js --seed 7 --nights 10 --out soak.json` | `crashes` = 0 và `mem_end_mb` ≤ 1.2 × `mem_start_mb`. Lần lượt Đêm 1→2→3, seed 7..16, tất định | `soak.json`, `release.test` (soak) |
+| AC4.5 | Thua, hoặc tới màn Bình Minh, rồi nhập tên | 2 ký tự bị từ chối; `Nguyễn_Bảo` được nhận. Mục mới lưu đủ 5 trường; giữ top 10, xếp điểm giảm dần, bằng điểm thì ai đạt trước đứng trên | ảnh 10–12, `release.test` (leaderboard) |
+| AC4.6 | `node dist/server.js --export-leaderboard out.json` | Ra `{"entries":[...]}` đúng thứ tự, đọc từ file trên đĩa (dùng tiến trình khác) | `docs/proof/phase-4/leaderboard-export.json`, `release.test` |
+| AC4.7 | Đổi phím Nhảy = F | Bị từ chối, báo "Phím F đang dùng cho Tỏa sáng". Gán J thì được. "Khôi phục mặc định" đưa Nhảy về Space. Lựa chọn được lưu | ảnh 02–04 |
+| AC4.8 | Bóng Mực xuất hiện / gió sắp thổi / 10 giây cuối / đèn tụt dưới 30 | Mỗi trường hợp có phụ đề. Riêng Bóng Mực có thêm mũi tên tím ở mép màn hình | ảnh 05–06 |
+| AC4.9 | Bật "Giảm chuyển động" rồi để Bóng Mực chạm Mây | Không chớp đỏ, không rung camera (khi tắt tùy chọn thì có) | ảnh 08–09 |
+| AC4.10 | Chữ giao diện ở 1280×720 | Gốc 18 px (1rem), không chữ nào nhỏ hơn. "Chữ lớn" đưa gốc lên 22,5 px | `index.html`, ảnh 07 |
+| AC4.11 | Các scenario Phase 1–3 | Cả 22 đạt; 21 file output giống hệt từng byte so với phase-3 | `docs/proof/phase-4/summary.md` |

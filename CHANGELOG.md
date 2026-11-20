@@ -1,5 +1,31 @@
 # CHANGELOG
 
+## [phase-4] v1.0.0 — Ticket-04 "Bình minh: phát hành v1.0.0" (Contract v1.3)
+
+### Contract và lệnh
+- `contract_version` **1.3**. `game.contract.json` thêm `bench_cmd` (`node scripts/bench.mjs`) và `soak_cmd` (`node --expose-gc --no-opt dist/soak.js`).
+- **Thay đổi `run_cmd`:** `npm run preview -- --host 0.0.0.0` thành `node dist/server.js` (máy chủ Node không phụ thuộc thư viện, phục vụ `dist/web` và API bảng xếp hạng). `node dist/server.js --export-leaderboard out.json` xuất `{"entries":[...]}`.
+- Đầu ra headless của v1.0–v1.2 **không đổi**: 21/21 file output của các scenario Phase 1–3 giống hệt từng byte giữa phase-3 và phase-4.
+
+### Tính năng
+- **Benchmark:** cảnh bench chuẩn (cờ `bench` trong sim chỉ phía render bật) và đo FPS bằng cửa sổ trình duyệt thật 1280×720 qua Playwright.
+- **Soak:** 10 Đêm trong một tiến trình, input ngẫu nhiên theo seed.
+- **Bảng xếp hạng cục bộ:**
+  - Nhập tên sau màn Bình Minh hoặc khi thua; nhận tên tiếng Việt có dấu.
+  - Giữ top 10, lưu trên đĩa ở `data/leaderboard.json`. Có màn hình riêng từ menu.
+- **Dễ tiếp cận:**
+  - Đổi phím cho mọi hành động, báo khi trùng phím, có nút "Khôi phục mặc định".
+  - Phụ đề và chỉ báo: Bóng Mực xuất hiện kèm mũi tên ở mép màn hình, gió sắp thổi, 10 giây cuối, đèn dưới 30 dầu.
+  - Tùy chọn "Giảm chuyển động" và "Chữ lớn ×1.25". Mọi chữ giao diện từ 18 px trở lên.
+- **Phần sáng tạo:** rung camera và chớp đỏ khi bị chạm. Cả hai tắt được bằng "Giảm chuyển động".
+- **Đóng gói:** `npm start`, Release v1.0.0 kèm bản build zip.
+
+### Sửa lỗi (review Codex)
+- `dist/server.js`: URL có mã hóa phần trăm bị hỏng từng làm sập server. Giờ server trả 400.
+- Cảnh bench: Bóng Mực ở gần Mây không còn chuyển sang `chase`; cả 200 con giữ trạng thái `wander` như ticket yêu cầu.
+
+Lý do thiết kế: [docs/adr/0002-release-bench-soak-leaderboard.md](docs/adr/0002-release-bench-soak-leaderboard.md).
+
 ## [phase-3] Ticket-03 "Đèn cạn dầu" (Contract v1.2)
 
 ### Thay đổi phá vỡ tương thích (BREAKING)

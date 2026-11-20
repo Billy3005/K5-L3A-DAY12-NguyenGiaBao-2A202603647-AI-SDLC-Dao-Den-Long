@@ -1,6 +1,6 @@
 # CLAUDE.md — Đảo Đèn Lồng (Day 12 AI SDLC lab)
 
-3D game (TypeScript + Three.js) with a headless mode graded by hidden tests against **Test Contract v1.1** (3 nights).
+3D game (TypeScript + Three.js) with a headless mode graded by hidden tests against **Test Contract v1.3** (3 nights; bench + soak + leaderboard export).
 Lab rules: [LAB-README](LAB-README.md) · [GUIDE](GUIDE.md) · [RUBRIC](RUBRIC.md) · [SUBMISSION](SUBMISSION.md). Living spec: [SPEC.md](SPEC.md). Ticket text (verbatim): [docs/tickets/](docs/tickets/) — quote it, never paraphrase numbers from memory.
 
 ## Commands
@@ -12,12 +12,16 @@ npm test                       # vitest: unit + scenario + determinism + contrac
 npm run verify -- N            # build + run ALL tests/scenarios (old phases = regression) via dist/headless.js, twice, diff -> docs/proof/phase-N/
 node dist/headless.js --seed 1 --night 3 --ticks 600 --out out.jsonl
 npm run shots -- N             # Playwright screenshots of the built game -> docs/proof/phase-N/screens/ (verify captions by eye)
+npm start                      # run_cmd: node dist/server.js (web + leaderboard API -> data/leaderboard.json); --export-leaderboard out.json
+node scripts/bench.mjs --seed 42 --duration 30 --out bench.json   # bench_cmd (real browser window via Playwright)
+node --expose-gc --no-opt dist/soak.js --seed 7 --nights 10 --out soak.json   # soak_cmd (--no-opt: see ADR 0002)
 ```
 
 ## Where things live
 
 - `src/sim/tuning.ts` contract numbers (`TUNING`) + ticket constants in ticks (`C`); `src/sim/maps.ts` the 3 standard maps (`topAt` terrain).
 - `src/sim/step.ts` follows Ticket-02's **mandatory 12-step tick order**; keep the numbered comments in sync with the ticket.
+- `src/sim/bench.ts` bench scene (`World.bench`, render-only, never headless); `src/io/soak.ts` soak; `src/leaderboard.ts` rules shared by client + `src/server.ts`.
 - Timer convention: a state set at tick T with N ticks shows in snapshots for ticks T..T+N-1 (decrement happens in step 2 of later ticks).
 
 ## Architecture rules (hard)
