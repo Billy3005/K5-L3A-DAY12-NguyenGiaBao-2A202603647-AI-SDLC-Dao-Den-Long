@@ -276,6 +276,35 @@ describe('maps: nights 2 and 3', () => {
   });
 });
 
+describe('Codex review regressions (phase 2)', () => {
+  it('pulse push stops at terrain obstacles (night 3 bell tower)', () => {
+    // player west of tower, shade between player and tower: push direction +X goes into the tower (r<=2 at y 6..14)
+    const w = createWorld(1, 3, quiet({ player: { pos: [-5, 6, 0], carried: 3 }, shades: [{ id: 'S1', pos: [-3, 7, 0] }] }));
+    step(w, inp({ pulse: true }));
+    for (let i = 0; i < 20; i++) step(w, inp());
+    expect(Math.hypot(w.shades[0].pos[0], w.shades[0].pos[2])).toBeGreaterThan(2);
+  });
+  it('wind gust is applied on exactly 300 movement ticks (10 m total)', () => {
+    const w = createWorld(4, 3, quiet({ wind_enabled: true, player: { pos: [0, 0, -30] } }));
+    for (let i = 0; i < 1800; i++) step(w, inp());
+    const a: Vec3 = [...w.player.pos];
+    for (let i = 0; i < 400; i++) step(w, inp());
+    near(distXZ(a, w.player.pos), 10, 1e-6);
+  });
+  it('drifter flees for 240 movement ticks after stealing (7 m/s -> 28 m), then removed', () => {
+    const w = createWorld(1, 2, quiet({ player: { carried: 6 }, drifters: [{ id: 'D1', pos: [3, 1, 0] }] }));
+    let t = 0;
+    while (w.drifters[0].state !== 'flee') { step(w, inp()); t++; }
+    const at: Vec3 = [...w.drifters[0].pos];
+    for (let i = 0; i < 239; i++) step(w, inp());
+    expect(w.drifters[0].state).toBe('flee');
+    step(w, inp());
+    expect(w.drifters[0].state).toBe('removed');
+    near(distXZ(at, w.drifters[0].pos), 28, 1e-6);
+    expect(t).toBe(16);
+  });
+});
+
 describe('pause', () => {
   it('freezes sim_tick, time and logic; tick still advances; paused/resumed events', () => {
     const lines = run({ seed: 1, ticks: 40, scenario: quiet({ shades: [{ id: 'S1', pos: [10, 1, 0] }] }), inputs: { frames: [

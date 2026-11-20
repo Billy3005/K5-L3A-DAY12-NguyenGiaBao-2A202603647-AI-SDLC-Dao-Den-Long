@@ -31,7 +31,7 @@ export function newShade(id: string, pos: Vec3, state: ShadeState = 'wander', st
 
 export function newDrifter(id: string, pos: Vec3, state: DrifterState = 'idle', stolen = 0, stateTicks = 0): Drifter {
   // idle drifters circle `home`; start on the circle at angle 0
-  return { id, pos: [...pos] as Vec3, state, stateTicks, stolen, home: [pos[0] - C.drifterIdleR, pos[2]], angle: 0 };
+  return { id, pos: [...pos] as Vec3, state, stateTicks, stolen, home: [pos[0] - C.drifterIdleR, pos[2]], angle: 0, fleeSetTick: -1 };
 }
 
 /** Pick a random free spawn point index (no random mote on it), or -1. */

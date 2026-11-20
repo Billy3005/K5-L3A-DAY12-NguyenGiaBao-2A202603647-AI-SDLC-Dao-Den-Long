@@ -28,7 +28,7 @@ export interface Shade {
 }
 export interface Drifter {
   id: string; pos: Vec3; state: DrifterState; stateTicks: number; stolen: number;
-  home: [number, number]; angle: number;
+  home: [number, number]; angle: number; fleeSetTick: number;
 }
 export interface Charm { id: string; pos: Vec3; available: boolean; respawnTicks: number }
 export interface Lantern { id: string; pos: Vec3; lit: boolean; deposited: number }

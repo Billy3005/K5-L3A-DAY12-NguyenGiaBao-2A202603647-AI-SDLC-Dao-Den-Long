@@ -90,10 +90,10 @@ export function step(w: World, input: InputState): GameEvent[] {
   for (const s of w.shades) {
     if ((s.state === 'stunned' || s.state === 'recoil' || s.state === 'spawning') && s.stateTicks > 0 && --s.stateTicks === 0) s.state = 'wander';
   }
-  for (const d of w.drifters) if (d.state === 'flee' && d.stateTicks > 0 && --d.stateTicks === 0) d.state = 'removed';
+  // (drifter flee timer and gust timer are not in the ticket's step-2 list: they count down after moving,
+  //  so a 240-tick flee / 300-tick gust acts on exactly 240 / 300 movement ticks)
   w.motes = w.motes.filter((m) => m.ttl === null || --m.ttl > 0);
   for (const c of w.charms) if (!c.available && c.respawnTicks > 0 && --c.respawnTicks === 0) c.available = true;
-  if (w.wind.ticks > 0 && --w.wind.ticks === 0) w.wind.dirDeg = null;
 
   // 3. move player (jump, dash, pads, wind), then fall check
   if (p.fallWaitTicks > 0) {
@@ -110,6 +110,7 @@ export function step(w: World, input: InputState): GameEvent[] {
       if (p.flames > 0) p.fallWaitTicks = C.fallWaitTicks;
     }
   }
+  if (w.wind.ticks > 0 && --w.wind.ticks === 0) w.wind.dirDeg = null;
 
   // 4. pickups (motes, charms)
   if (targetable(w) && p.flames > 0) {
@@ -173,11 +174,11 @@ export function step(w: World, input: InputState): GameEvent[] {
     }
     for (const d of byId(w.drifters)) {
       if (d.state === 'removed' || dist3(center, d.pos) > T.pulse_radius) continue;
-      if (d.state === 'chase') { d.state = 'flee'; d.stateTicks = C.drifterFleeTicks; drifterIds.push(d.id); }
+      if (d.state === 'chase') { d.state = 'flee'; d.stateTicks = C.drifterFleeTicks; d.fleeSetTick = w.simTick; drifterIds.push(d.id); }
       else if (d.state === 'flee' && d.stolen > 0) {
         const amount = d.stolen; d.stolen = 0;
         dropMotes(w, d.pos, amount, false);
-        d.stateTicks = C.drifterDropFleeTicks;
+        d.stateTicks = C.drifterDropFleeTicks; d.fleeSetTick = w.simTick;
         drifterIds.push(d.id);
         emit('drifter_drop', { drifter_id: d.id, amount });
       }
@@ -198,9 +199,15 @@ export function step(w: World, input: InputState): GameEvent[] {
     } else if (s.state === 'stunned') {
       if (s.pushTicks > 0) {
         s.pushTicks--;
-        s.pos[0] += s.pushDir[0] * (T.pulse_push_m / C.pushTicks);
-        s.pos[2] += s.pushDir[1] * (T.pulse_push_m / C.pushTicks);
-        if (clampOutsideSafe(s, w.lanterns)) s.pushTicks = 0; // obstacle stops the push
+        const nx = s.pos[0] + s.pushDir[0] * (T.pulse_push_m / C.pushTicks);
+        const nz = s.pos[2] + s.pushDir[1] * (T.pulse_push_m / C.pushTicks);
+        // obstacle = terrain rising above the shade's hover base (tier wall, bell tower): the push stops there
+        const top = map.topAt(nx, nz);
+        if (top !== null && top > s.pos[1] - C.shadeHoverY + C.stepUp) s.pushTicks = 0;
+        else {
+          s.pos[0] = nx; s.pos[2] = nz;
+          if (clampOutsideSafe(s, w.lanterns)) s.pushTicks = 0; // safe-zone edge also stops the push
+        }
       }
     } else if (s.state === 'recoil') {
       s.pos[0] += s.recoilDir[0] * (C.recoilM / C.recoilTicks);
@@ -227,7 +234,7 @@ export function step(w: World, input: InputState): GameEvent[] {
       if (d.state !== 'chase' || distXZ(d.pos, p.pos) > C.drifterTouchM) continue;
       const amount = Math.min(C.drifterStealMax, p.carried);
       p.carried -= amount; d.stolen = amount;
-      d.state = 'flee'; d.stateTicks = C.drifterFleeTicks;
+      d.state = 'flee'; d.stateTicks = C.drifterFleeTicks; d.fleeSetTick = w.simTick;
       emit('drifter_steal', { drifter_id: d.id, amount, carried: p.carried });
     }
     for (const s of byId(w.shades)) {
@@ -313,6 +320,8 @@ function moveDrifter(w: World, d: Drifter): void {
   } else if (d.state === 'flee') {
     const [ux, uz] = away(p.pos, d.pos);
     d.pos[0] += ux * sp; d.pos[2] += uz * sp;
+    // count down after moving; the tick the flee was (re)set does not count
+    if (d.fleeSetTick !== w.simTick && --d.stateTicks <= 0) { d.stateTicks = 0; d.state = 'removed'; }
   }
 }
 

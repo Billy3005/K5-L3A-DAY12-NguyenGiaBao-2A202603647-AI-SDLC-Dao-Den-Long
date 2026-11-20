@@ -31,6 +31,8 @@ Số liệu, bản đồ và thứ tự 12 bước trong một tick lấy **nguy
 | B16 | Sự kiện `pulse`: `{stunned_ids, drifter_ids}`. Thứ tự sự kiện trong cùng tick theo thứ tự xử lý (ví dụ `drifter_drop` trước `pulse`). |
 | B17 | Vùng an toàn: Bóng Mực trong vùng khi đèn vừa thắp bị đẩy ra theo hướng tâm 0.2 m/tick (≤ 30 tick), không gây sát thương trong lúc đó. Bóng ngoài vùng bị chặn ở mép 6 m. Nhiều vùng chồng nhau được giải lặp. |
 | B18 | Scenario: `charms[] {id, pos?, available?, respawn_ticks?}`, `drifters[] {id?, pos, state?, stolen?, state_ticks_left?}`, `shades[] {…, state?, state_ticks_left?}`. |
+| B20 | Bộ đếm trong danh sách bước 2 của ticket (bùa, bất tử, hồi chiêu, choáng, TTL) giảm **trước** khi di chuyển, theo đúng thứ tự bắt buộc. Vì vậy Bùa Gió nhặt ở tick T hiển thị `charm_s` từ tick T đến T+599 và tăng tốc di chuyển cho các tick T+1 đến T+599. Bộ đếm **không** có trong danh sách (Gió Lạc bỏ chạy, cơn gió) giảm **sau** khi di chuyển, để đủ 240 / 300 lần tác dụng. |
+| B21 | Đẩy lùi của Tỏa Sáng dừng khi gặp vật cản địa hình (vách tầng, tháp chuông: mặt đất cao hơn chân Bóng Mực, tức tâm − 1 m, quá 0.3 m) hoặc mép vùng an toàn. |
 | B19 | Phiên bản chơi: tạm dừng chỉ dừng gọi `step()` (logic dừng hoàn toàn). Điểm tổng = tổng điểm các Đêm đã thắng. |
 
 ## Tiêu chí nghiệm thu Phase 2 (Ticket-02 Phần 3 + contract)
