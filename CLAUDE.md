@@ -40,7 +40,7 @@ Overrides the template's per-skill approval gates (too slow for the time box; us
 2. Update `SPEC.md` (rules + acceptance criteria) first, then code.
 3. Test-first on `src/sim` (vitest scenarios), small commits, one concern each.
 4. Self-verify: `npm test` green + `npm run verify -- N` → proof in `docs/proof/phase-N/`.
-5. **One Codex review per phase** of the whole phase diff before tagging (fresh `codex exec`, diff + acceptance criteria only; do not resume long sessions). Fix in-scope findings only, report others.
+5. **One Codex review per phase** of the whole phase diff before tagging: fresh `codex exec -c sandbox_mode="read-only" -` with the contract text + changed sources **inlined** in the prompt (Codex's Windows sandbox cannot run shell; never resume long sessions, ~145k tokens each). Write a failing test per finding, then fix in-scope ones; report others.
 6. Notes (`docs/notes/phase-N.md`: assumptions, eval, AI log with token estimates) → `git tag phase-N` → push.
 
 Time is up → tag anyway and record what is unfinished as "chưa đạt". Never hand-edit outputs or write always-pass tests.
