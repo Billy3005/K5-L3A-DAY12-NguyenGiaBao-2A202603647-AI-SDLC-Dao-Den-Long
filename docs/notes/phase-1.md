@@ -21,7 +21,7 @@
 | AC5 Thắng `all_lit`, thua `dawn` | Đạt | rules test, `p1-collect-and-light`, `p1-dawn` |
 | AC6 Tất định, exit 2 khi đầu vào sai | Đạt | `tests/contract.test.ts`, `p1-bad-inputs`, mỗi scenario chạy 2 lần |
 | AC7 `tuning` khớp game | Đạt | `tests/contract.test.ts` so `game.contract.json` với `src/sim/tuning.ts` |
-| AC8 Chơi được trên trình duyệt | **Chưa kiểm chứng bằng ảnh** | Cần chơi thử thủ công và chụp màn hình (xem bên dưới) |
+| AC8 Chơi được trên trình duyệt | Đạt (ảnh bổ sung sau khi gắn tag) | [docs/proof/phase-1/screenshots.md](../proof/phase-1/screenshots.md): HUD, đang chơi, màn thua và chơi lại |
 | Build trên macOS/Linux | Chờ CI | `.github/workflows/ci.yml` chạy `npm ci && npm run build` trên ubuntu và macos sau khi push. Docker Desktop local không chạy nên chưa thử Linux tại máy. |
 
 Bằng chứng headless: [docs/proof/phase-1/summary.md](../proof/phase-1/summary.md).

@@ -37,8 +37,12 @@ Các scenario `p1-hit-lose`, `p1-dawn`, `p1-bad-inputs` vẫn đạt mà không 
 | AC2.1–AC2.8, AC2.13 (headless) | Đạt | 42 test + 16/16 scenario, [docs/proof/phase-2/summary.md](../proof/phase-2/summary.md) |
 | AC2.14 Hồi quy Phase 1 | Đạt | `p1-*` chạy lại với số chuẩn |
 | AC2.13 Hiệu năng headless | Đạt | Đêm 3 đủ 21.600 tick: 243 ms (i5-12500H, Node 22) |
-| AC2.9–AC2.12 (giao diện, âm thanh, HUD, bảng màu) | **Đã làm, chưa có ảnh chụp** | Cần chơi thử và chụp ảnh |
-| AC2.13 FPS ≥ 30 ở 1280×720 | **Chưa đo** | Bộ đếm FPS có sẵn ở góc dưới trái HUD, cần chạy thật và ghi lại |
+| AC2.8 Menu tạm dừng | Đạt | [screenshots.md](../proof/phase-2/screenshots.md), ảnh 06 |
+| AC2.9 Chuỗi 3 Đêm | Đạt | Ảnh 02–05: kết quả Đêm 1 → giới thiệu Đêm 2 (Ông Đăng) → thắng Đêm 2 (tổng 2638) → giới thiệu Đêm 3. Điểm khớp luật. |
+| AC2.12 HUD | Đạt | Ảnh 01: đúng bố cục ticket, có mũi tên chỉ đèn |
+| AC2.12 Bảng màu | **Chưa đạt** | Thân Bóng Mực hiện tím sáng (ticket: `#120A1A` gần đen, viền `#7A3CFF`); áo Mây trông tối, khăn đỏ khó thấy |
+| AC2.13 FPS ≥ 30 | Đạt (đo ở điều kiện khắt khe hơn) | 54–76 FPS ở 1707×825 (nhiều điểm ảnh hơn 1280×720 khoảng 1,5 lần); chưa đo đúng ở 1280×720 |
+| AC2.10 Cài đặt, AC2.11 Âm thanh, menu chính, màn Bình Minh | Đã làm, **chưa có ảnh** | Cần ảnh bảng Cài đặt và màn Bình Minh |
 
 ## Nhật ký lỗi của AI
 
