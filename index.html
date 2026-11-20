@@ -5,17 +5,49 @@
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>Đảo Đèn Lồng</title>
   <style>
-    html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0816; font-family: system-ui, sans-serif; color: #ffe6b8; }
-    #hud { position: fixed; top: 12px; left: 12px; padding: 10px 14px; background: rgba(20, 12, 40, .65); border-radius: 10px; line-height: 1.6; font-size: 15px; pointer-events: none; }
-    #help { position: fixed; bottom: 12px; left: 12px; font-size: 13px; opacity: .75; pointer-events: none; }
-    #overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; flex-direction: column; background: rgba(10, 6, 24, .7); font-size: 22px; text-align: center; }
-    #overlay h1 { font-size: 44px; margin: 0 0 12px; color: #ffb347; }
+    :root { --text: #F5F1E6; --danger: #FF5A5F; --gold: #F2C14E; --night: #0E1430; --scarf: #C8102E; }
+    html, body { margin: 0; height: 100%; overflow: hidden; background: var(--night); font-family: system-ui, sans-serif; color: var(--text); }
+    .hud { position: fixed; pointer-events: none; text-shadow: 0 1px 3px #000; font-size: 18px; }
+    #hFlames { top: 14px; left: 16px; font-size: 26px; letter-spacing: 4px; }
+    #hTimer { top: 12px; left: 50%; transform: translateX(-50%); font-size: 30px; font-variant-numeric: tabular-nums; }
+    #hTimer.danger { color: var(--danger); animation: blink 1s steps(2) infinite; }
+    @keyframes blink { 50% { opacity: .35; } }
+    #hRight { top: 14px; right: 16px; text-align: right; line-height: 1.5; }
+    #hRight .score { color: var(--gold); font-weight: 700; }
+    #hMotes { bottom: 18px; left: 50%; transform: translateX(-50%); display: flex; gap: 5px; }
+    #hMotes i { width: 18px; height: 18px; border-radius: 50%; border: 2px solid #FFE58A88; display: block; }
+    #hMotes i.on { background: #FFF6C2; box-shadow: 0 0 10px #FFE58A; border-color: #FFE58A; }
+    #hCds { bottom: 16px; right: 16px; display: flex; gap: 10px; }
+    .cd { width: 54px; height: 54px; border-radius: 12px; background: #1B2350cc; border: 2px solid var(--gold); position: relative; overflow: hidden; display: grid; place-items: center; font-size: 12px; }
+    .cd b { position: absolute; left: 0; right: 0; bottom: 0; background: #00000099; }
+    #hPrompt { bottom: 70px; left: 50%; transform: translateX(-50%); background: #1B2350cc; padding: 6px 14px; border-radius: 8px; display: none; }
+    #hArrow { width: 0; height: 0; border-left: 14px solid transparent; border-right: 14px solid transparent; border-bottom: 30px solid #FFB347; display: none; filter: drop-shadow(0 0 6px #FFB347); }
+    #hInfo { bottom: 16px; left: 16px; font-size: 12px; opacity: .7; }
+    #hWind { top: 56px; left: 50%; transform: translateX(-50%); color: #8FA3B8; display: none; }
+    #screen { position: fixed; inset: 0; display: flex; align-items: center; justify-content: center; background: #0E1430dd; z-index: 5; }
+    #screen.hidden { display: none; }
+    .panel { text-align: center; max-width: 560px; padding: 28px; }
+    .panel h1 { color: #FFB347; font-size: 44px; margin: 0 0 8px; }
+    .panel h2 { color: var(--gold); margin: 0 0 12px; }
+    .panel p { line-height: 1.6; }
+    .panel .quote { font-style: italic; opacity: .9; }
+    .panel button { display: block; margin: 10px auto; min-width: 220px; padding: 10px 18px; font-size: 17px; border-radius: 10px; border: 2px solid var(--gold); background: #1B2350; color: var(--text); cursor: pointer; }
+    .panel button:hover { background: #2a356e; }
+    .panel label { display: block; margin: 14px 0; }
+    .panel input[type=range] { width: 260px; vertical-align: middle; }
   </style>
 </head>
 <body>
-  <div id="hud"></div>
-  <div id="help">WASD di chuyển · ← → / kéo chuột xoay camera · Space nhảy · <b>E</b> nạp đèn · <b>F / chuột trái</b> tỏa sáng · <b>R</b> chơi lại</div>
-  <div id="overlay"><h1 id="title"></h1><div id="detail"></div><div style="margin-top:16px;font-size:16px">Nhấn <b>R</b> để chơi lại</div></div>
+  <div id="hFlames" class="hud"></div>
+  <div id="hTimer" class="hud"></div>
+  <div id="hRight" class="hud"></div>
+  <div id="hWind" class="hud">🍃 Gió sắp nổi…</div>
+  <div id="hMotes" class="hud"></div>
+  <div id="hCds" class="hud"><div class="cd" id="cdDash">Lướt<b></b></div><div class="cd" id="cdPulse">Tỏa<b></b></div></div>
+  <div id="hPrompt" class="hud"></div>
+  <div id="hArrow" class="hud"></div>
+  <div id="hInfo" class="hud"></div>
+  <div id="screen"></div>
   <script type="module" src="/src/render/main.ts"></script>
 </body>
 </html>
