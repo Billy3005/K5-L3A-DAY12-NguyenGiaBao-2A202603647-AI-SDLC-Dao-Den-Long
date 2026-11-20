@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="vi">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Đảo Đèn Lồng</title>
+  <style>
+    html, body { margin: 0; height: 100%; overflow: hidden; background: #0b0816; font-family: system-ui, sans-serif; color: #ffe6b8; }
+    #hud { position: fixed; top: 12px; left: 12px; padding: 10px 14px; background: rgba(20, 12, 40, .65); border-radius: 10px; line-height: 1.6; font-size: 15px; pointer-events: none; }
+    #help { position: fixed; bottom: 12px; left: 12px; font-size: 13px; opacity: .75; pointer-events: none; }
+    #overlay { position: fixed; inset: 0; display: none; align-items: center; justify-content: center; flex-direction: column; background: rgba(10, 6, 24, .7); font-size: 22px; text-align: center; }
+    #overlay h1 { font-size: 44px; margin: 0 0 12px; color: #ffb347; }
+  </style>
+</head>
+<body>
+  <div id="hud"></div>
+  <div id="help">WASD di chuyển · ← → / kéo chuột xoay camera · Space nhảy · <b>E</b> nạp đèn · <b>F / chuột trái</b> tỏa sáng · <b>R</b> chơi lại</div>
+  <div id="overlay"><h1 id="title"></h1><div id="detail"></div><div style="margin-top:16px;font-size:16px">Nhấn <b>R</b> để chơi lại</div></div>
+  <script type="module" src="/src/render/main.ts"></script>
+</body>
+</html>
