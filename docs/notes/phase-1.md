@@ -35,6 +35,7 @@ Bằng chứng headless: [docs/proof/phase-1/summary.md](../proof/phase-1/summar
 | 3 | Vùng an toàn chồng nhau: đẩy ra khỏi vùng này lại rơi vào vùng khác | Review Codex (MED) | Test tái hiện, giải ràng buộc lặp |
 | 4 | Kỳ vọng của scenario `p1-default-night` sai: Claude giả định chuỗi input "mù" sẽ nhặt được đom đóm | `npm run verify` báo FAIL | Kiểm tra output thật: game đúng luật, kỳ vọng sai. Sửa kỳ vọng thành tính chất có nghĩa (Bóng Mực đuổi và chạm người chơi). Đã thêm vào skill `verify-phase` quy tắc: kỳ vọng tính tay **trước** khi chạy, không chép output vào kỳ vọng. |
 | 5 | Phiên bản đầu của `stop-gate.mjs` dùng `require` trong ESM | Claude tự đọc lại trước khi chạy | Viết lại, test cả nhánh xanh và nhánh đỏ |
+| 7 | Stop hook báo đỏ giả: chạy với cwd `c:\...` (ổ đĩa chữ thường) khiến Vitest nạp hai bản module, lỗi `reading 'config'`. Lúc đó test thật vẫn 28/28 xanh. | Chính Stop hook chặn kết thúc | Tái hiện được: cwd `c:/` lỗi, `C:/` đạt. Hook chuẩn hóa chữ cái ổ đĩa, đã thử lại đúng điều kiện của Claude Code. Hook đã làm đúng việc: không cho kết thúc khi chưa chứng minh được là xanh. |
 | 6 | Review Codex lần đầu không đọc được repo (sandbox read-only trên Windows chặn shell) | Codex tự báo | Đổi sang đưa mã nguồn thẳng vào prompt: rẻ hơn và không phụ thuộc sandbox |
 
 ## Token và chi phí (ước tính)

@@ -6,7 +6,10 @@ import { readFileSync } from 'node:fs';
 let payload = {};
 try { payload = JSON.parse(readFileSync(0, 'utf8') || '{}'); } catch { /* no payload */ }
 
-const r = spawnSync(process.execPath, ['node_modules/vitest/vitest.mjs', 'run', '--reporter=dot'], { encoding: 'utf8' });
+// Windows: a lowercase drive letter in cwd (Claude Code runs hooks from `c:\...`) makes Vitest load two
+// module instances -> "Cannot read properties of undefined (reading 'config')". Normalize to `C:\...`.
+const cwd = process.cwd().replace(/^[a-z]:/, (d) => d.toUpperCase());
+const r = spawnSync(process.execPath, ['node_modules/vitest/vitest.mjs', 'run', '--reporter=dot'], { cwd, encoding: 'utf8' });
 if (r.status === 0) process.exit(0);
 
 const tail = `${r.stdout}\n${r.stderr}`.trim().split('\n').slice(-25).join('\n');
