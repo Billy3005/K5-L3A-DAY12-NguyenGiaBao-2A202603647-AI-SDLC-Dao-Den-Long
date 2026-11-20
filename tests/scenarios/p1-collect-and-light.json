@@ -1,5 +1,5 @@
 {
-  "requirement": "PRD-0 + Ticket-02 số chuẩn: nhặt 10 đom đóm, nạp (+10/con), thắp đèn (+100), thắng khi thắp hết",
+  "requirement": "PRD-0 nhặt/nạp/thắp; Ticket-03 [THAY THẾ]: thắp hết đèn KHÔNG kết thúc Đêm (bỏ all_lit), +5/đom đóm, +100 thắp lần đầu",
   "seed": 1,
   "ticks": 200,
   "scenario": {
@@ -134,21 +134,17 @@
       "name": "lantern_lit",
       "tick": 52,
       "data": {
-        "lantern_id": "L1"
-      }
-    },
-    {
-      "name": "game_over",
-      "tick": 52,
-      "data": {
-        "result": "won",
-        "reason": "all_lit"
+        "lantern_id": "L1",
+        "relight": false
       }
     }
   ],
   "expect_end": {
-    "ticks": 52,
-    "state": "won",
-    "score": 948
-  }
+    "ticks": 200,
+    "state": "playing",
+    "score": 150
+  },
+  "expect_no_events": [
+    "game_over"
+  ]
 }

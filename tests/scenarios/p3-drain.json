@@ -1,0 +1,55 @@
+{
+  "requirement": "Ticket-03 §2 Bóng Mực wander tới đèn yếu (<30), ≤2 m thì drain 5/s; fuel_drain mỗi 60 tick",
+  "seed": 1,
+  "ticks": 110,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "random_drifters": false,
+    "wind_enabled": false,
+    "motes": [],
+    "shades": [
+      {
+        "id": "S1",
+        "pos": [
+          0,
+          1,
+          20.1
+        ]
+      }
+    ],
+    "drifters": [],
+    "charms": [],
+    "player": {
+      "pos": [
+        0,
+        0,
+        -20
+      ]
+    },
+    "lanterns": [
+      {
+        "id": "L1",
+        "pos": [
+          0,
+          0,
+          25
+        ],
+        "lit": true,
+        "fuel": 25
+      }
+    ]
+  },
+  "expect_exit": 0,
+  "expect_events": [
+    {
+      "name": "fuel_drain",
+      "tick": 104,
+      "data": {
+        "lantern_id": "L1",
+        "shade_id": "S1",
+        "fuel": 18.3
+      }
+    }
+  ]
+}

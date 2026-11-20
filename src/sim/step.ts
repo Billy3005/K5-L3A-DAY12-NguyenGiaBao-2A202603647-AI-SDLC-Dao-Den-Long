@@ -44,7 +44,7 @@ function nearestLantern(w: World, from: Vec3, ok: (l: Lantern) => boolean): Lant
 function evictFrom(w: World, l: Lantern): void {
   for (const s of w.shades) {
     const d = distXZ(s.pos, l.pos);
-    if (d < T.safe_radius) {
+    if (d <= T.safe_radius) { // "within r" means ≤ r (contract)
       s.evictTicks = C.evictTicks; s.evictFrom = l.pos;
       s.evictStep = (T.safe_radius + 1e-3 - d) / C.evictTicks;
       if (s.state === 'drain') s.state = 'wander';

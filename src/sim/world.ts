@@ -106,7 +106,8 @@ export function createWorld(seed: number, night: 1 | 2 | 3 = 1, scenario: Scenar
     if (l.lit !== undefined) t.lit = l.lit;
     if (l.ever_lit !== undefined) t.everLit = l.ever_lit;
     // Ticket-03: lit without fuel -> 100; a lit lantern has (obviously) been lit; unlit lanterns hold no fuel
-    if (t.lit) { t.everLit = true; t.fuel = Math.round((l.fuel ?? TUNING.fuel_max) * C.fuelUnit); if (t.fuel <= 0) { t.lit = false; t.fuel = 0; } }
+    // a lit lantern holds deposited = its lighting cost (decision R5)
+    if (t.lit) { t.everLit = true; t.deposited = C.firstLightCost; t.fuel = Math.round((l.fuel ?? TUNING.fuel_max) * C.fuelUnit); if (t.fuel <= 0) { t.lit = false; t.fuel = 0; t.deposited = 0; } }
     else t.fuel = 0;
   }
 

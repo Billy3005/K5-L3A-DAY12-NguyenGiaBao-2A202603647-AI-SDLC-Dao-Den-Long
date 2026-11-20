@@ -1,0 +1,40 @@
+{
+  "requirement": "Ticket-03 §4 Sức chứa 10 + 2×successful_lights (đã thắp 1 lần -> 12)",
+  "seed": 1,
+  "ticks": 1,
+  "scenario": {
+    "random_motes": false,
+    "random_shades": false,
+    "random_drifters": false,
+    "wind_enabled": false,
+    "motes": [
+      [
+        0,
+        0,
+        0
+      ],
+      [
+        0,
+        0,
+        0.5
+      ]
+    ],
+    "shades": [],
+    "drifters": [],
+    "charms": [],
+    "player": {
+      "carried": 11,
+      "successful_lights": 1
+    }
+  },
+  "expect_exit": 0,
+  "expect_events": [
+    {
+      "name": "mote_picked",
+      "tick": 1,
+      "data": {
+        "carried": 12
+      }
+    }
+  ]
+}

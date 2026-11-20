@@ -89,6 +89,19 @@ describe('shades drain weak lanterns', () => {
   });
 });
 
+describe('Codex review regressions (phase 3)', () => {
+  it('scenario-lit lantern holds deposited = lighting cost', () => {
+    const s = snapAt(run({ seed: 1, ticks: 0, scenario: quiet({ lanterns: [{ id: 'L1', lit: true }, { id: 'L2', lit: true, deposited: 99 }] }) }), 0);
+    expect(s.lanterns[0].deposited).toBe(10);
+    expect(s.lanterns[1].deposited).toBe(10);
+  });
+  it('a shade exactly 6 m away is evicted (within r means <= r)', () => {
+    const lines = run({ seed: 1, ticks: 30, scenario: quiet({ player: { pos: [0, 0, 26.5], carried: 10 }, lanterns: [{ id: 'L1', pos: [0, 0, 25], lit: true, fuel: 20 }],
+      shades: [{ id: 'S1', pos: [6, 1, 25], state: 'stunned', state_ticks_left: 100 }] }), inputs: interact0 });
+    expect(distXZ(snapAt(lines, 30).shades[0].pos, [0, 0, 25])).toBeGreaterThan(6);
+  });
+});
+
 describe('dawn win rule', () => {
   const lamps = (n: number, fuel = 50) => ['L1', 'L2', 'L3', 'L4', 'L5'].slice(0, n).map((id) => ({ id, lit: true, fuel }));
   it('alive at dawn with >= ceil(0.6 N) lit -> won dawn_survived; score Σ(50+floor(fuel)) + 50 x flames', () => {
