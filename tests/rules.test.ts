@@ -117,6 +117,35 @@ describe('shades and hits', () => {
   });
 });
 
+describe('Codex review regressions (phase 1)', () => {
+  it('random_motes/random_shades false without lists -> no entities at all', () => {
+    const w = createWorld(1, { random_motes: false, random_shades: false });
+    expect(w.motes).toHaveLength(0);
+    expect(w.shades).toHaveLength(0);
+  });
+  it('stun lasts exactly pulse_stun_s * 60 ticks after the pulse tick', () => {
+    const w = createWorld(1, quiet({ player: { carried: 1 }, shades: [{ id: 'S1', pos: [3, 0, 0] }] }));
+    step(w, inp({ pulse: true }));
+    for (let i = 0; i < T.pulse_stun_s * 60 - 1; i++) step(w, inp());
+    expect(w.shades[0].state).toBe('stunned');
+    step(w, inp());
+    expect(w.shades[0].state).toBe('chase');
+  });
+  it('overlapping safe zones: shade ends outside every lit lantern radius', () => {
+    const w = createWorld(1, quiet({
+      player: { pos: [3.5, 0, 0] },
+      lanterns: [{ id: 'L1', pos: [0, 0, 0], lit: true }, { id: 'L2', pos: [7, 0, 0], lit: true }],
+      shades: [{ id: 'S1', pos: [3.5, 0, 3] }],
+    }));
+    for (let i = 0; i < 120; i++) {
+      step(w, inp());
+      for (const l of w.lanterns.filter((x) => x.lit)) {
+        expect(Math.hypot(w.shades[0].pos[0] - l.pos[0], w.shades[0].pos[2] - l.pos[2])).toBeGreaterThan(T.safe_radius);
+      }
+    }
+  });
+});
+
 describe('game over', () => {
   it('wins when all lanterns lit, with time and flame bonus', () => {
     const lanterns = ['L1', 'L2', 'L3', 'L4'].map((id) => ({ id, lit: true }));

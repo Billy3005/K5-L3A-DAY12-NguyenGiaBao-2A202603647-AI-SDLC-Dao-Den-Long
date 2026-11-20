@@ -18,6 +18,8 @@ Giả định (A*) là chỗ PRD-0 mơ hồ, được Codex duyệt thay ngườ
 | A8 | Bóng Mực luôn đuổi người chơi với `shade_speed`; không vào được bán kính `safe_radius` của đèn **đã thắp** (bị đẩy ra mép). Bóng Mực choáng thì đứng yên, không gây sát thương. |
 | A9 | Bị chạm (`≤ shade_hit_radius`, không bất tử): −1 ngọn lửa, rơi `floor(carried × hit_drop_ratio)` đom đóm (mất hẳn), bất tử `invuln_s`. Tối đa 1 lần chạm mỗi tick. |
 | A10 | Nhảy chỉ đổi trục Y; mọi luật dùng khoảng cách XZ nên nhảy không né được Bóng Mực. |
+| A12 | Scenario đã ở trạng thái kết thúc (5 đèn `lit` sẵn, `flames: 0`, `time_left_s: 0`) vẫn là `playing` ở tick 0 (dựng scenario không phát sự kiện); `game_over` xảy ra ở bước đầu tiên (tick 1). Với `--ticks 0` thì `end.state = playing`. |
+| A13 | Choáng kéo dài đúng `pulse_stun_s × 60` tick tính từ tick tỏa sáng; nhiều vùng an toàn chồng nhau được giải lặp để Bóng Mực ra ngoài mọi vùng. |
 | A11 | Thứ tự trong một tick: hẹn giờ → di chuyển/nhảy → nhặt → nạp → tỏa sáng → Bóng Mực → va chạm → sinh thêm → kết thúc. |
 
 ## Tiêu chí nghiệm thu Phase 1

@@ -76,7 +76,7 @@ export function createWorld(seed: number, scenario: Scenario = {}): World {
 
   if (scenario.motes) {
     for (const p of scenario.motes) w.motes.push({ id: `M${w.nextMoteId++}`, pos: [p[0], 0, p[2]] });
-  } else {
+  } else if (w.randomMotes) {
     for (let i = 0; i < WORLD.initialMotes; i++) spawnMote(w);
   }
 
@@ -96,7 +96,7 @@ export function createWorld(seed: number, scenario: Scenario = {}): World {
       const n = /^S(\d+)$/.exec(id as string);
       if (n) w.nextShadeId = Math.max(w.nextShadeId, Number(n[1]) + 1);
     }
-  } else {
+  } else if (w.randomShades) {
     for (let i = 0; i < WORLD.initialShades; i++) spawnShade(w);
   }
   return w;

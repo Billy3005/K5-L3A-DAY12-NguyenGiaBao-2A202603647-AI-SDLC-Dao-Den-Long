@@ -28,16 +28,22 @@ function clampToIsland(p: Vec3): void {
   }
 }
 
-/** Shades may not be within safe_radius of a lit lantern: push them just outside. */
+/** Shades may not be within safe_radius of a lit lantern: push them just outside.
+ *  Repeated passes resolve overlapping zones (a push out of one may land inside another). */
 function enforceSafeZones(s: Shade, lanterns: Lantern[]): void {
-  for (const l of lanterns) {
-    if (!l.lit) continue;
-    const d = distXZ(s.pos, l.pos);
-    if (d <= T.safe_radius) {
-      const [dx, dz] = d > 1e-9 ? [(s.pos[0] - l.pos[0]) / d, (s.pos[2] - l.pos[2]) / d] : [1, 0];
-      s.pos[0] = l.pos[0] + dx * (T.safe_radius + 0.01);
-      s.pos[2] = l.pos[2] + dz * (T.safe_radius + 0.01);
+  for (let pass = 0; pass < 8; pass++) {
+    let moved = false;
+    for (const l of lanterns) {
+      if (!l.lit) continue;
+      const d = distXZ(s.pos, l.pos);
+      if (d <= T.safe_radius) {
+        const [dx, dz] = d > 1e-9 ? [(s.pos[0] - l.pos[0]) / d, (s.pos[2] - l.pos[2]) / d] : [1, 0];
+        s.pos[0] = l.pos[0] + dx * (T.safe_radius + 0.01);
+        s.pos[2] = l.pos[2] + dz * (T.safe_radius + 0.01);
+        moved = true;
+      }
     }
+    if (!moved) return;
   }
 }
 
@@ -103,6 +109,7 @@ export function step(w: World, input: InputState): GameEvent[] {
   }
 
   // pulse: costs light, stuns + pushes shades in radius
+  const stunnedNow = new Set<Shade>();
   if (rise('pulse') && p.pulseCdTicks === 0 && p.carried >= T.pulse_cost) {
     p.carried -= T.pulse_cost;
     p.pulseCdTicks = secToTicks(T.pulse_cooldown_s);
@@ -117,6 +124,7 @@ export function step(w: World, input: InputState): GameEvent[] {
       enforceSafeZones(s, w.lanterns);
       s.state = 'stunned';
       s.stunTicks = secToTicks(T.pulse_stun_s);
+      stunnedNow.add(s);
       stunned.push(s.id);
       w.score += T.score.per_stun;
     }
@@ -126,7 +134,8 @@ export function step(w: World, input: InputState): GameEvent[] {
   // shades
   for (const s of w.shades) {
     if (s.state === 'stunned') {
-      if (--s.stunTicks <= 0) { s.state = 'chase'; s.stunTicks = 0; }
+      // a shade stunned this step keeps the full pulse_stun_s (no decrement on the pulse tick)
+      if (!stunnedNow.has(s) && --s.stunTicks <= 0) { s.state = 'chase'; s.stunTicks = 0; }
       continue;
     }
     const d = distXZ(s.pos, p.pos);
